@@ -1,24 +1,24 @@
 const CreateProfile=async(Profile)=>{ 
-  return  await window.canister.GovTransChainApi.CreateProfile(Profile)
+  return  await window.canister.GovChainApi.CreateProfile(Profile)
 }
 const getProfile=async()=>{
-  return await window.canister.GovTransChainApi.getProfile()
+  return await window.canister.GovChainApi.getProfile()
 }
 const GetAllProfile=async()=>{
-  return await window.canister.GovTransChainApi.GetAllProfile()
+  return await window.canister.GovChainApi.GetAllProfile()
 }
 // Program endpoint
 const CreateProgram=async(Program)=>{
   console.log(Program, "hello")
-  return await window.canister.GovTransChainApi.CreateProgram(Program)
+  return await window.canister.GovChainApi.CreateProgram(Program)
 }
 
 const GetAllProgram=async()=> {
-  return await window.canister.GovTransChainApi.GetAllProgram()
+  return await window.canister.GovChainApi.GetAllProgram()
 }
 
 const ProgramStats =async()=>{
-  return await window.canister.GovTransChainApi.ProgramStats()
+  return await window.canister.GovChainApi.ProgramStats()
 }
 
 
@@ -27,69 +27,69 @@ const ProgramStats =async()=>{
 // Stock endpoint
 const CreateStock=async(Stock)=>{
   console.log(Stock)
-  return await window.canister.GovTransChainApi.CreateStock(Stock)
+  return await window.canister.GovChainApi.CreateStock(Stock)
 }
 
 const GetAllStock=async()=>{
-  return await window.canister.GovTransChainApi.GetAllStock()
+  return await window.canister.GovChainApi.GetAllStock()
 }
 
 const StockStats =async()=>{
-  return await window.canister.GovTransChainApi.StockStats()
+  return await window.canister.GovChainApi.StockStats()
 }
 
 
 const GetStore=async()=>{
-  return await window.canister.GovTransChainApi.GetStore()
+  return await window.canister.GovChainApi.GetStore()
 }
 const ChangeRole=async(RolePayload)=>{
-  return await window.canister.GovTransChainApi.ChangeRole(RolePayload)
+  return await window.canister.GovChainApi.ChangeRole(RolePayload)
 }
 
 const getProfilesByRole=async(Role)=>{
-  return await window.canister.GovTransChainApi.getProfilesByRole(Role)
+  return await window.canister.GovChainApi.getProfilesByRole(Role)
 }
 
 const AddLeaderToProgram =async(ProgramId,LeaderId)=>{
-  return await window.canister.GovTransChainApi.AddLeaderToProgram(ProgramId,LeaderId)
+  return await window.canister.GovChainApi.AddLeaderToProgram(ProgramId,LeaderId)
 }
 
 const CitizenRequest=async(ProgramId)=>{
-  return await window.canister.GovTransChainApi.CitizenRequest(ProgramId)
+  return await window.canister.GovChainApi.CitizenRequest(ProgramId)
 }
 
 const ViewRequest=async(ProgramId)=>{
-  return await window.canister.GovTransChainApi.ViewRequest(ProgramId)
+  return await window.canister.GovChainApi.ViewRequest(ProgramId)
 }
 
 
 const ApproveRequest=async(ProgramId,ProfileId)=>{
-  return await window.canister.GovTransChainApi.ApproveRequest(ProgramId,ProfileId)
+  return await window.canister.GovChainApi.ApproveRequest(ProgramId,ProfileId)
 }
 
 const Transfer= async(Payload)=>{
   console.log("Transfer",Payload)
-  return await window.canister.GovTransChainApi.Transfer(Payload)
+  return await window.canister.GovChainApi.Transfer(Payload)
 }
 const Distribute=async(Payload)=>{
   console.log(Payload,"Distribute")
-  return await window.canister.GovTransChainApi.Distribute(Payload)
+  return await window.canister.GovChainApi.Distribute(Payload)
 }
 
 const ProgramLeaders =async(ProgramId)=>{
-  return await window.canister.GovTransChainApi.ProgramLeaders(ProgramId)
+  return await window.canister.GovChainApi.ProgramLeaders(ProgramId)
 }
 
 const GetAllLeader =async()=>{
-  return await window.canister.GovTransChainApi.GetAllLeader()
+  return await window.canister.GovChainApi.GetAllLeader()
 }
 
 
 const ProgramCitizens=async(ProgramId)=>{
-  return await window.canister.GovTransChainApi.ProgramCitizens(ProgramId)
+  return await window.canister.GovChainApi.ProgramCitizens(ProgramId)
 }
 const AllTransactions = async()=>{
-  return await window.canister.GovTransChainApi.AllTransactions()
+  return await window.canister.GovChainApi.AllTransactions()
 }
 
 

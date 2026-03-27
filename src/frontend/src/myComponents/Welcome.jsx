@@ -18,7 +18,7 @@ const Welcome=({name, role})=>{
     return(
         <div className="h-screen w-full overflow-clip bg-[#65a8fd] relative">
             <div className="flex  justify-between p-5">
-                <span className="ml-4 text-white font-bold text-xl"> GovTransChain</span>
+                <span className="ml-4 text-white font-bold text-xl"> GovChain</span>
                 <span className="mr-4 bg-[#65a8fd] p-2 text-white font-bold shadow-sm rounded-full">?</span>
             </div>
 

@@ -1,10 +1,10 @@
-# GovTransChain
+# GovChain
 
 ## Overview
 
-GovTransChain is an innovative blockchain-based platform designed to revolutionize government fund distribution by ensuring transparency, accountability, and efficiency at every level of the process. The platform is tailored to address common issues like fund mismanagement, corruption, and lack of traceability in traditional distribution systems.
+GovChain is an innovative blockchain-based platform designed to revolutionize government fund distribution by ensuring transparency, accountability, and efficiency at every level of the process. The platform is tailored to address common issues like fund mismanagement, corruption, and lack of traceability in traditional distribution systems.
 
-By leveraging blockchain technology, GovTransChain introduces a decentralized, secure, and verifiable method for transferring funds through various administrative levels—from national agencies to local communities and individual beneficiaries.
+By leveraging blockchain technology, GovChain introduces a decentralized, secure, and verifiable method for transferring funds through various administrative levels—from national agencies to local communities and individual beneficiaries.
 
 ## Data Flow
 
@@ -113,14 +113,14 @@ your application will be available at `http://localhost:8000?canisterId={asset_c
 ` http://{canisterId}.localhost:8000/`
 
 * Homepage
-![Alt text](src/frontend/src/assets/Homepage-1.png)
+![Alt text](src/frontend/src/assets/1.png)
 
 * Onboarding
-![Alt text](src/frontend/src/assets/onBoard-1.png)
+![Alt text](src/frontend/src/assets/2.png)
 
 * Statistics
 
-![Alt text](src/frontend/src/assets/overallstat.png)
+![Alt text](src/frontend/src/assets/4.png)
 
 * High official adding program
 

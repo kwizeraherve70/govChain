@@ -48,7 +48,7 @@ const SideBar = ({ sideBarStatus, toggleSideBar }) => {
 				<h1
 					className={`origin-left duration-300 font-bold text-2xl ${!open && 'scale-0'}`}
 				>
-					GovTransChain
+					GovChain
 				</h1>
 			</div>
 			<div className="border-b border-gray-200">

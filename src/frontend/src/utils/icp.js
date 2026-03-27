@@ -1,4 +1,4 @@
-import { GovTransChainCanister } from "./canister";
+import { GovChainCanister } from "./canister";
 import { getAuthClient } from "./auth";
 
 export async function Contract(){
@@ -10,5 +10,5 @@ export async function Contract(){
     window.auth.identity = authClient.getIdentity();
     window.auth.principal = authClient.getIdentity()?.getPrincipal();
     window.auth.principalText = authClient.getIdentity()?.getPrincipal().toText();
-    window.canister.GovTransChainApi= await GovTransChainCanister();
+    window.canister.GovChainApi= await GovChainCanister();
 }
