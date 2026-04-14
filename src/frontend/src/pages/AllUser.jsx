@@ -10,9 +10,10 @@ import AllProfileTable from "@/myComponents/Tables/AllProfileTable";
 const Users=()=> {
     return(
         <>
-		<h1 className="text-5xl p-4 font-bold text-gray-800 dark:text-white">
-				Users
-			</h1>
+		<div className="px-5 pt-5 pb-2">
+			<h1 className="text-3xl font-extrabold gradient-text">Users</h1>
+			<p className="text-white/40 text-sm mt-1">Registered system participants</p>
+		</div>
             <div className="w-[95%]  mx-auto">
                <AllProfileTable/>
 			 

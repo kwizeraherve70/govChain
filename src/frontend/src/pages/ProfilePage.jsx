@@ -4,7 +4,7 @@ import { Outlet } from "react-router";
 
 const ProfilePage=()=>{
     return(
-       <div className="bg-gray-100 h-screen overflow-y-auto">
+       <div className="bg-web3-dark h-screen overflow-y-auto">
           <Outlet/>
        </div>
     )

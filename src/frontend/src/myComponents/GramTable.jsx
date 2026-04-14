@@ -1,123 +1,85 @@
-import React, {useEffect, useMemo} from "react";
+import React, { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllProgramThunk } from '../Redux/action/GetAllProgram';
 import TableSkeleton from "./skeletors/tableSkeletor";
 
+const ProgramDashTable = ({ setStats2 }) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(GetAllProgramThunk());
+  }, [dispatch]);
 
-const ProgramDashTable=({setStats2})=>{
-  const dispatch = useDispatch()
-  useEffect(()=>{
-    dispatch(GetAllProgramThunk())
-  }, [dispatch])
-  const { loadingz,Allprogram,Errorz  } = useSelector((state)=> state.AllProgram)
-  useMemo(()=>{
-    setStats2(Allprogram)
-},[Allprogram])
-  return(
-        <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-sm rounded-xl">
-      <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Top Program</h2>
+  const { loadingz, Allprogram, Errorz } = useSelector((state) => state.AllProgram);
+  useMemo(() => {
+    setStats2(Allprogram);
+  }, [Allprogram]);
+
+  return (
+    <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4
+                    bg-white/[0.05] backdrop-blur-lg border border-white/[0.1]
+                    rounded-2xl shadow-card overflow-hidden">
+      <header className="px-5 py-4 border-b border-white/[0.08] flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-white/70 uppercase tracking-wider">
+          Top Programs
+        </h2>
+        <span className="text-xs text-white/30">{Allprogram?.length || 0} total</span>
       </header>
-      <div className="p-3">
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="table-auto w-full dark:text-gray-300">
-            {/* Table header */}
-            <thead className="text-xs uppercase text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 dark:bg-opacity-50 rounded-sm">
+
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-white/[0.06]">
+              <th className="px-4 py-3 text-left text-xs font-semibold text-white/40 uppercase tracking-wider">
+                Program
+              </th>
+              <th className="px-4 py-3 text-center text-xs font-semibold text-white/40 uppercase tracking-wider">
+                Leaders
+              </th>
+              <th className="px-4 py-3 text-center text-xs font-semibold text-white/40 uppercase tracking-wider">
+                Citizens
+              </th>
+              <th className="px-4 py-3 text-center text-xs font-semibold text-white/40 uppercase tracking-wider">
+                Beneficials
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/[0.04]">
+            {loadingz ? (
               <tr>
-                <th className="p-2">
-                  <div className="font-semibold text-left">Program Name</div>
-                </th>
-                <th className="p-2">
-                  <div className="font-semibold text-center">Leaders</div>
-                </th>
-                <th className="p-2">
-                  <div className="font-semibold text-center">Citizens</div>
-                </th>
-                <th className="p-2">
-                  <div className="font-semibold text-center">Beneficials</div>
-                </th>
+                <td colSpan="4" className="text-center py-8">
+                  <TableSkeleton />
+                </td>
               </tr>
-            </thead>
-            {/* Table body */}
-            <tbody className="text-sm font-medium divide-y divide-gray-100 dark:divide-gray-700/60">
-              {/* Row */}
-              {loadingz ? (
-                <tr>
-                  <td colSpan="4" style={{ textAlign: "center" }}>
-                    <TableSkeleton />
+            ) : Allprogram?.length === 0 || Errorz ? (
+              <tr>
+                <td colSpan="4" className="text-center py-8 text-white/30">
+                  No programs found
+                </td>
+              </tr>
+            ) : (
+              Allprogram?.map((item) => (
+                <tr key={item.ProgramId}
+                    className="hover:bg-white/[0.03] transition-colors duration-150">
+                  <td className="px-4 py-3.5">
+                    <span className="text-white/80 font-medium">{item.Name}</span>
+                  </td>
+                  <td className="px-4 py-3.5 text-center text-web3-accent font-medium">
+                    {item.LocalLeaders.length}
+                  </td>
+                  <td className="px-4 py-3.5 text-center text-web3-glow font-medium">
+                    {item.Citizens.length}
+                  </td>
+                  <td className="px-4 py-3.5 text-center text-web3-green font-medium">
+                    {item.Beneficials}
                   </td>
                 </tr>
-              ) : Allprogram?.length === 0 || Errorz ? (
-                <tr>
-                  <td colSpan="4" style={{ textAlign: "center" }}>
-                    <p>No Users</p>
-                  </td>
-                </tr>
-              ) :(
-                Allprogram?.map((item)=>(
-                  <tr>
-                        <td className="p-2">
-                          <div className="flex items-center">
-                            <div className="text-gray-800 dark:text-gray-100">{item.Name}</div>
-                          </div>
-                        </td>
-                        <td className="p-2">
-                          <div className="text-center">{item.LocalLeaders.length}</div>
-                        </td>
-                        <td className="p-2">
-                          <div className="text-center text-green-500">{item.Citizens.length}</div>
-                        </td>
-                        <td className="p-2">
-                          <div className="text-center">{item.Beneficials}</div>
-                        </td>
-                      </tr> 
-             ))
-              )}
-
-
-
-
-
-
-
-
-              {/* {loadingz?
-     (<div style={{textAlign: "center"}}>
-      <TableSkeleton />
-   </div>):  
-   (Allprogram?.length  === 0|| Errorz)?(
-    <div style={{textAlign: "center"}}>
-          <p>No Users</p>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
     </div>
-  ):(
-    Allprogram.map((item)=>(
-          <tr>
-                <td className="p-2">
-                  <div className="flex items-center">
-                    <div className="text-gray-800 dark:text-gray-100">{item.Name}</div>
-                  </div>
-                </td>
-                <td className="p-2">
-                  <div className="text-center">{item.LocalLeaders.length}</div>
-                </td>
-                <td className="p-2">
-                  <div className="text-center text-green-500">{item.Citizens.length}</div>
-                </td>
-                <td className="p-2">
-                  <div className="text-center">{item.Beneficials}</div>
-                </td>
-              </tr> 
-     ))
+  );
+};
 
-  )}  */}
-   </tbody>
-      </table>
-    </div>
-  </div>
-</div>
-    )
-
-}
-
-export default ProgramDashTable
+export default ProgramDashTable;

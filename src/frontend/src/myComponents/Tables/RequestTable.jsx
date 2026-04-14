@@ -65,17 +65,34 @@ const RequestedTable = () => {
       toolbar: GridToolbar,
     }}
     sx={{
-      backgroundColor: '#f5f5f5', 
-      '& .MuiDataGrid-row': {
-        backgroundColor: '#ffffff', 
-        '&:nth-of-type(odd)': {
-          backgroundColor: '#f9f9f9',
-        },
-      },
-      boxShadow: '0 4px 10px rgba(200, 200, 200, 0.7)',
-      borderRadius: '8px',
-      border: '1px solid #ddd',
-    }}
+          border: 'none',
+          borderRadius: '12px',
+          color: 'rgba(255,255,255,0.75)',
+          fontFamily: 'inherit',
+          backgroundColor: 'rgba(255,255,255,0.03)',
+          '& .MuiDataGrid-columnHeaders': {
+            backgroundColor: 'rgba(255,255,255,0.04)',
+            color: 'rgba(255,255,255,0.5)',
+            fontSize: '0.72rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.05em',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+          },
+          '& .MuiDataGrid-row': {
+            backgroundColor: 'transparent',
+            borderBottom: '1px solid rgba(255,255,255,0.04)',
+            '&:hover': { backgroundColor: 'rgba(255,255,255,0.03)' },
+          },
+          '& .MuiDataGrid-cell': { borderBottom: 'none', color: 'rgba(255,255,255,0.7)' },
+          '& .MuiDataGrid-toolbarContainer': {
+            padding: '8px 4px',
+            '& .MuiButton-root': { color: 'rgba(124,58,237,0.85)', fontSize: '0.75rem' },
+          },
+          '& .MuiTablePagination-root': { color: 'rgba(255,255,255,0.5)' },
+          '& .MuiIconButton-root': { color: 'rgba(255,255,255,0.4)' },
+          '& .MuiDataGrid-footerContainer': { borderTop: '1px solid rgba(255,255,255,0.08)' },
+          '& .MuiInputBase-root': { color: 'rgba(255,255,255,0.6)' },
+        }}
   />
       
       )} 

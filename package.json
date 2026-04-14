@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "build": "vite build ",
-    "prebuild": "dfx generate",
     "start": "vite",
     "deploy:local": "dfx deploy --network=local",
     "deploy:ic": "dfx deploy --network=ic",
@@ -19,6 +18,7 @@
     "@dfinity/agent": "^2.1.1",
     "@dfinity/auth-client": "^2.1.1",
     "@dfinity/candid": "^2.1.1",
+    "@dfinity/identity": "^2.1.1",
     "@dfinity/nns": "^6.0.0",
     "@dfinity/principal": "^2.1.1",
     "@dfinity/utils": "^2.5.0",
@@ -35,6 +35,8 @@
     "@radix-ui/react-popover": "^1.1.2",
     "@radix-ui/react-select": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.0",
+    "@react-three/drei": "^9.122.0",
+    "@react-three/fiber": "^8.18.0",
     "@reduxjs/toolkit": "^2.4.0",
     "azle": "^0.24.1",
     "chart.js": "^4.4.7",
@@ -56,6 +58,7 @@
     "react-toastify": "^10.0.6",
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
+    "three": "^0.183.2",
     "uuid": "^10.0.0",
     "yup": "^1.5.0"
   },

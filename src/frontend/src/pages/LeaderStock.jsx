@@ -4,9 +4,10 @@ import LeaderStockTable from "@/myComponents/Tables/LeaderStockTable";
 const LeaderStock=()=> {
     return(
         <>
-		<h1 className="text-5xl p-4 font-bold text-gray-800 dark:text-white">
-				My Stock
-			</h1>
+		<div className="px-5 pt-5 pb-2">
+			<h1 className="text-3xl font-extrabold gradient-text">My Stock</h1>
+			<p className="text-white/40 text-sm mt-1">Allocated resources & materials</p>
+		</div>
             <div className="w-[95%]  mx-auto">
 			<LeaderStockTable/>
             </div>
