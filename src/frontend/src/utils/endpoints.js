@@ -92,6 +92,18 @@ const AllTransactions = async()=>{
   return await window.canister.GovChainApi.AllTransactions()
 }
 
+const MyTransactions = async()=>{
+  return await window.canister.GovChainApi.MyTransactions()
+}
+
+const ApproveTransaction = async(TransactionId) => {
+  return await window.canister.GovChainApi.ApproveTransaction(TransactionId)
+}
+
+const RejectTransaction = async(TransactionId) => {
+  return await window.canister.GovChainApi.RejectTransaction(TransactionId)
+}
+
 
 
 
@@ -122,7 +134,10 @@ export {
   ProgramCitizens,
   GetAllLeader,
 
-  AllTransactions
+  AllTransactions,
+  MyTransactions,
+  ApproveTransaction,
+  RejectTransaction,
 }
 
 

@@ -19,6 +19,9 @@ import GetAllLeaderSlice from "../slice/GetAllLeaderSlice"
 import ChangeRoleSlice from '../slice/ChangeRoleSlice';
 import AddLeaderToSlice from '../slice/AddLeaderToSlice';
 import AllTransactionsSlice from "../slice/AllTransactionSlice"
+import ApproveTransactionSlice from "../slice/ApproveTransactionSlice";
+import RejectTransactionSlice from "../slice/RejectTransactionSlice";
+import MyTransactionsSlice from "../slice/MyTransactionsSlice";
 
 
 const store = configureStore({
@@ -45,9 +48,10 @@ const store = configureStore({
 		GetAllLeader: GetAllLeaderSlice,
 		ChangeRole: ChangeRoleSlice,
 		AddLeader: AddLeaderToSlice,
-		AllTransactions:AllTransactionsSlice
-
-		
+		AllTransactions: AllTransactionsSlice,
+		ApproveTransaction: ApproveTransactionSlice,
+		RejectTransaction: RejectTransactionSlice,
+		MyTransactions: MyTransactionsSlice,
 	},
 });
 

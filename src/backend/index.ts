@@ -158,6 +158,7 @@ const StockPayload = Record({
 
 type StockPayload = typeof StockPayload.tsType
 
+
 const TransactionEnum = Variant({
     TRANSFER: text,
     DISTRIBUTE: text
@@ -371,13 +372,13 @@ export default Canister({
         
         const UserProfile = UserProfileStorage.get(ic.caller())
 
-        // if(!UserProfile){
-        //   return Err({NoProfile: "No Profile"})
-        // }
+        if(!UserProfile){
+          return Err({NoProfile: "No Profile"})
+        }
 
-        // if(!RoleAuth(UserProfile.Role,"HIGH_OFFICIAL")){
-        //  return Err({Unauthorized: "Access Denied"})
-        // }
+        if(!RoleAuth(UserProfile.Role,"HIGH_OFFICIAL")){
+         return Err({Unauthorized: "Access Denied"})
+        }
         const NewProgram: Program ={
           ProgramId:  uuidv4(),
           Name,
@@ -442,10 +443,10 @@ export default Canister({
           return Err({NoProfile: "No Profile"})
         }
 
-        // if(!RoleAuth(UserProfile.Role,"HIGH_OFFICIAL")){
-        //   return Err({Unauthorized: "Access Denied"})
-        // }
-        
+        if(!RoleAuth(UserProfile.Role,"HIGH_OFFICIAL")){
+          return Err({Unauthorized: "Access Denied"})
+        }
+
         if(!ProgramOpt) {
           return Err({NotFound: "Program not found"})
         }
@@ -495,6 +496,21 @@ export default Canister({
       }
     }),
 
+    MyTransactions: query([],Result(Vec(StockTransactions), Message),()=>{
+      try{
+        const UserProfileOpt = UserProfileStorage.get(ic.caller());
+        if(!UserProfileOpt) return Err({NoProfile: "No Profile"});
+        const allTx = StockTransactionStorage.values();
+        const myTx = allTx.filter((tx: StockTransactions)=>(
+          tx.SenderId === UserProfileOpt.ProfileId || tx.ReceiverId === UserProfileOpt.ProfileId
+        ));
+        if(myTx.length === 0) return Err({NotFound: "No transactions found"});
+        return Ok(myTx);
+      }catch(error: any){
+        return Err({Error: `Error occured ${error.message}`})
+      }
+    }),
+
     AllTransactions: query([],Result(Vec(StockTransactions), Message),()=>{
       try{
           const Transactions = StockTransactionStorage.values()
@@ -537,13 +553,13 @@ export default Canister({
         const UserProfileOpt = UserProfileStorage.get(ic.caller())
         const AllUserProfile = UserProfileStorage.values()
 
-        // if(!UserProfileOpt){
-        //   return Err({NoProfile: "No Profile"})
-        // }
+        if(!UserProfileOpt){
+          return Err({NoProfile: "No Profile"})
+        }
 
-        // if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL")){
-        //   return Err({Unauthorized: "Access Denied"})
-        // }
+        if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL")){
+          return Err({Unauthorized: "Access Denied"})
+        }
         if(AllUserProfile.length == 0) {
           return Err({NotFound: "No profile exist"})
         }
@@ -576,37 +592,37 @@ export default Canister({
 
     
 
-    // getProfilesByRole: query([text],Result(Vec(UserProfile), Message),(Role)=>{
-    //   try{
-    //     const userProfile = UserProfileStorage.values();
-    //     if(userProfile.length == 0) {
-    //       return Err({NotFound: "No available profile"})
-    //     }
+    getProfilesByRole: query([text],Result(Vec(UserProfile), Message),(Role)=>{
+      try{
+        const userProfile = UserProfileStorage.values();
+        if(userProfile.length == 0) {
+          return Err({NotFound: "No available profile"})
+        }
 
-    //     const ProfilesByRole = userProfile.filter((user: UserProfile)=> (
-    //       Object.values(user.Role)[0] === Role
-    //     ))
-    //     if(ProfilesByRole.length == 0) {
-    //       return Err({NotFound: "No one with the role"})
-    //     }
-    //     return Ok(ProfilesByRole)
-    //   }catch(error: any) {
-    //     return Err({Err: `Error occured ${error.message}`})
-    //   }
+        const ProfilesByRole = userProfile.filter((user: UserProfile)=> (
+          Object.values(user.Role)[0] === Role
+        ))
+        if(ProfilesByRole.length == 0) {
+          return Err({NotFound: "No one with the role"})
+        }
+        return Ok(ProfilesByRole)
+      }catch(error: any) {
+        return Err({Err: `Error occured ${error.message}`})
+      }
 
-    // }),
+    }),
     AddLeaderToProgram: update([text,text], Result(text,Message), (ProgramId,LeaderId)=>{
       try{
-       // const UserProfileOpt = UserProfileStorage.get(ic.caller())
+        const UserProfileOpt = UserProfileStorage.get(ic.caller())
         const AllUserProfile = UserProfileStorage.values()
         const ProgramOpt = ProgramStorage.get(ProgramId)
 
-        // if(!UserProfileOpt){
-        //   return Err({NoProfile: "No Profile"})
-        // }
-        // if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL")){
-        //   return Err({Unauthorized: "Access Denied"})
-        // }
+        if(!UserProfileOpt){
+          return Err({NoProfile: "No Profile"})
+        }
+        if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL")){
+          return Err({Unauthorized: "Access Denied"})
+        }
 
         if(!ProgramOpt) {
           return Err({NotFound: "Program no found"})
@@ -646,9 +662,9 @@ export default Canister({
         if(!ProgramOpt) {
           return Err({NotFound: "Program no found"})
         }
-        // if(!RoleAuth(UserProfileOpt.Role,"CITIZEN")){
-        //   return Err({Unauthorized: "Access Denied"})
-        // }
+        if(!RoleAuth(UserProfileOpt.Role,"CITIZEN")){
+          return Err({Unauthorized: "Access Denied"})
+        }
         if(ProgramOpt.RequestCitizens.includes(UserProfileOpt.ProfileId) ||
         ProgramOpt.Citizens.includes(UserProfileOpt.ProfileId)
       ){
@@ -716,11 +732,11 @@ export default Canister({
         if(!UserProfileOpt){
           return Err({NoProfile: "No Profile"})
         }
-      //   if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL") || 
-      //   !RoleAuth(UserProfileOpt.Role,"LOCAL_LEADER")
-      // ){
-      //     return Err({Unauthorized: "Access Denied"})
-      //   }
+        if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL") &&
+           !RoleAuth(UserProfileOpt.Role,"LOCAL_LEADER")
+        ){
+          return Err({Unauthorized: "Access Denied"})
+        }
 
         if(ProgramOpt.RequestCitizens.length == 0) {
           return Err({NotFound: "NO requests"})
@@ -746,11 +762,11 @@ export default Canister({
         if(!UserProfileOpt){
           return Err({NoProfile: "No Profile"})
         }
-      //   if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL") || 
-      //   !RoleAuth(UserProfileOpt.Role,"LOCAL_LEADER")
-      // ){
-      //     return Err({Unauthorized: "Access Denied"})
-      //   }
+        if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL") &&
+           !RoleAuth(UserProfileOpt.Role,"LOCAL_LEADER")
+        ){
+          return Err({Unauthorized: "Access Denied"})
+        }
 
         if(!ProgramOpt.RequestCitizens.includes(ProfileId) ||
         ProgramOpt.Citizens.includes(ProfileId)
@@ -765,6 +781,14 @@ export default Canister({
         ProgramOpt.Citizens.push(ProfileId)
         ProgramStorage.insert(ProgramOpt.ProgramId,ProgramOpt)
 
+        // Update citizen's ProgramsJoined list
+        const AllUserProfiles = UserProfileStorage.values();
+        const citizenProfile = AllUserProfiles.find((p: UserProfile) => p.ProfileId === ProfileId);
+        if(citizenProfile && !citizenProfile.ProgramsJoined.includes(ProgramId)){
+          citizenProfile.ProgramsJoined.push(ProgramId);
+          UserProfileStorage.insert(citizenProfile.Owner, citizenProfile);
+        }
+
        return Ok("Approved successfully")
       }catch(error: any) {
         return Err({Err: `Error occured ${error.message}`})
@@ -776,13 +800,12 @@ export default Canister({
          const {  StockId, ReceiverId, Quantity } = payload;
          const UserProfileOpt = UserProfileStorage.get(ic.caller());
          const StockOpt = StockStorage.get(StockId);
-         const  StoreOpt = StoreStorage.get(ReceiverId)
         if(!UserProfileOpt){
           return Err({NoProfile: "No Profile"})
         }
-        // if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL")){
-        //   return Err({Unauthorized: "Access Denied"})
-        // }
+        if(!RoleAuth(UserProfileOpt.Role,"HIGH_OFFICIAL")){
+          return Err({Unauthorized: "Access Denied"})
+        }
 
         if(!StockOpt) {
           return Err({NotFound: "Stock not found"})
@@ -798,12 +821,10 @@ export default Canister({
           return Err({NotFound: "Please the leader"})
         }
 
-        if(StockOpt.RemainingStock < Quantity){
+        if(Number(StockOpt.RemainingStock) < Number(Quantity)){
           return Err({Error: "No enough stock"})
         }
-        const newQuantity = (Number(StockOpt.RemainingStock) - Number(Quantity)).toString()
 
-        StockOpt.RemainingStock = newQuantity;
         const NewTransaction : StockTransactions = {
           TransactionId: uuidv4(),
           StockId,
@@ -811,57 +832,130 @@ export default Canister({
           ReceiverId,
           Quantity,
           TransactionType: { TRANSFER: "TRANSFER"},
-          Status: { PENDING:"ACCEPT"},
+          Status: { PENDING: "PENDING"},
           CreatedAt: getCurrentDate()
         }
 
-        if(!StoreOpt){
-           const newStore = {
-               stores:[{
-                StockId,
-                ProgramId: StockProgramOpt.ProgramId,
-                StockName: StockOpt.StockName,
-                Quantity
-              }
-               ]
-           }
-
-           StoreStorage.insert(ReceiverId,newStore)
-        }else{
-        const otherStore = {
-                StockId,
-                ProgramId: StockProgramOpt.ProgramId,
-                StockName: StockOpt.StockName,
-                Quantity
-        }
-
-        StoreOpt.stores.push(otherStore)
-        StoreStorage.insert(ReceiverId,StoreOpt)
-      }
-        StockStorage.insert(StockOpt.StockId, StockOpt);
-        StockTransactionStorage.insert(NewTransaction.TransactionId,NewTransaction);
-        return Ok("Transferred!")
+        StockTransactionStorage.insert(NewTransaction.TransactionId, NewTransaction);
+        return Ok("Transfer pending approval")
       }catch(error: any) {
         return Err({Error:`Error occured ${error.message}`})
       }
     }),
 
 
+    ApproveTransaction: update([text], Result(text, Message), (TransactionId) => {
+      try {
+        const UserProfileOpt = UserProfileStorage.get(ic.caller());
+        if (!UserProfileOpt) return Err({ NoProfile: "No Profile" });
+        if (!RoleAuth(UserProfileOpt.Role, "HIGH_OFFICIAL") && !RoleAuth(UserProfileOpt.Role, "LOCAL_LEADER")) {
+          return Err({ Unauthorized: "Access Denied" });
+        }
+        const TxOpt = StockTransactionStorage.get(TransactionId);
+        if (!TxOpt) return Err({ NotFound: "Transaction not found" });
+
+        const txType = Object.keys(TxOpt.TransactionType)[0];
+
+        if(txType === "TRANSFER"){
+          // Move stock from global StockStorage to receiver's StoreStorage
+          const StockOpt = StockStorage.get(TxOpt.StockId);
+          if(!StockOpt) return Err({ NotFound: "Stock not found" });
+          if(Number(StockOpt.RemainingStock) < Number(TxOpt.Quantity)) {
+            return Err({ Error: "Insufficient remaining stock" });
+          }
+          const StockProgramOpt = ProgramStorage.get(StockOpt.ProgramId);
+          if(!StockProgramOpt) return Err({ NotFound: "Program not found" });
+
+          StockOpt.RemainingStock = (Number(StockOpt.RemainingStock) - Number(TxOpt.Quantity)).toString();
+          StockStorage.insert(TxOpt.StockId, StockOpt);
+
+          const receiverStore = StoreStorage.get(TxOpt.ReceiverId);
+          if(!receiverStore){
+            StoreStorage.insert(TxOpt.ReceiverId, {
+              stores: [{ StockId: TxOpt.StockId, ProgramId: StockProgramOpt.ProgramId, StockName: StockOpt.StockName, Quantity: TxOpt.Quantity }]
+            });
+          } else {
+            const idx = receiverStore.stores.findIndex((s: StoreObject) => s.StockId === TxOpt.StockId);
+            if(idx >= 0){
+              receiverStore.stores[idx].Quantity = (Number(receiverStore.stores[idx].Quantity) + Number(TxOpt.Quantity)).toString();
+            } else {
+              receiverStore.stores.push({ StockId: TxOpt.StockId, ProgramId: StockProgramOpt.ProgramId, StockName: StockOpt.StockName, Quantity: TxOpt.Quantity });
+            }
+            StoreStorage.insert(TxOpt.ReceiverId, receiverStore);
+          }
+
+        } else if(txType === "DISTRIBUTE"){
+          // Move stock from sender's StoreStorage to receiver's StoreStorage
+          const senderStore = StoreStorage.get(TxOpt.SenderId);
+          if(!senderStore) return Err({ NotFound: "Sender store not found" });
+          const itemIdx = senderStore.stores.findIndex((s: StoreObject) => s.StockId === TxOpt.StockId);
+          if(itemIdx === -1) return Err({ NotFound: "Stock not in sender store" });
+          const item = senderStore.stores[itemIdx];
+          if(Number(item.Quantity) < Number(TxOpt.Quantity)) {
+            return Err({ Error: "Insufficient stock in sender store" });
+          }
+
+          senderStore.stores[itemIdx].Quantity = (Number(item.Quantity) - Number(TxOpt.Quantity)).toString();
+          StoreStorage.insert(TxOpt.SenderId, senderStore);
+
+          const receiverStore = StoreStorage.get(TxOpt.ReceiverId);
+          if(!receiverStore){
+            StoreStorage.insert(TxOpt.ReceiverId, {
+              stores: [{ StockId: TxOpt.StockId, ProgramId: item.ProgramId, StockName: item.StockName, Quantity: TxOpt.Quantity }]
+            });
+          } else {
+            const idx = receiverStore.stores.findIndex((s: StoreObject) => s.StockId === TxOpt.StockId);
+            if(idx >= 0){
+              receiverStore.stores[idx].Quantity = (Number(receiverStore.stores[idx].Quantity) + Number(TxOpt.Quantity)).toString();
+            } else {
+              receiverStore.stores.push({ StockId: TxOpt.StockId, ProgramId: item.ProgramId, StockName: item.StockName, Quantity: TxOpt.Quantity });
+            }
+            StoreStorage.insert(TxOpt.ReceiverId, receiverStore);
+          }
+        }
+
+        const updated: StockTransactions = { ...TxOpt, Status: { ACCEPTED: "ACCEPTED" } };
+        StockTransactionStorage.insert(TransactionId, updated);
+        return Ok("Transaction approved");
+      } catch (error: any) {
+        return Err({ Error: `Error occurred ${error.message}` });
+      }
+    }),
+
+    RejectTransaction: update([text], Result(text, Message), (TransactionId) => {
+      try {
+        const UserProfileOpt = UserProfileStorage.get(ic.caller());
+        if (!UserProfileOpt) return Err({ NoProfile: "No Profile" });
+        if (!RoleAuth(UserProfileOpt.Role, "HIGH_OFFICIAL") && !RoleAuth(UserProfileOpt.Role, "LOCAL_LEADER")) {
+          return Err({ Unauthorized: "Access Denied" });
+        }
+        const TxOpt = StockTransactionStorage.get(TransactionId);
+        if (!TxOpt) return Err({ NotFound: "Transaction not found" });
+        const updated: StockTransactions = {
+          ...TxOpt,
+          Status: { REJECT: "REJECT" }
+        };
+        StockTransactionStorage.insert(TransactionId, updated);
+        return Ok("Transaction rejected");
+      } catch (error: any) {
+        return Err({ Error: `Error occurred ${error.message}` });
+      }
+    }),
+
     Distribute: update([StockTransactionsProp],Result(text,Message),(payload)=>{
      try{
          const {  StockId, ReceiverId, Quantity } = payload;
          const UserProfileOpt = UserProfileStorage.get(ic.caller());
-         const receiveStoreOpt = StoreStorage.get(ReceiverId)
-         
+
         if(!UserProfileOpt){
           return Err({NoProfile: "No Profile"})
         }
         const StoreOpt = StoreStorage.get(UserProfileOpt.ProfileId)
 
-        // if(!RoleAuth(UserProfileOpt.Role,"LOCAL_LEADER")){
-        //   return Err({Unauthorized: "Access Denied"})
-        // }
-        
+        if(!RoleAuth(UserProfileOpt.Role,"LOCAL_LEADER")){
+          return Err({Unauthorized: "Access Denied"})
+        }
+
         if(!StoreOpt) {
           return Err({NotFound: "Stock not found"})
         }
@@ -886,49 +980,23 @@ export default Canister({
           return Err({NotFound: "Add citizen to list"})
         }
 
-        if(StockOpt.Quantity < Quantity){
-        return Err({Error: "No enough stock"})
-        }
-        const newQuantity = Number(StockOpt.Quantity) - Number(Quantity)
-        if(!receiveStoreOpt){
-          const newStore = {
-            stores:[{
-             StockId,
-             ProgramId: StockProgramOpt.ProgramId,
-             StockName: StockOpt.StockName,
-             Quantity
-           }
-            ]
+        if(Number(StockOpt.Quantity) < Number(Quantity)){
+          return Err({Error: "No enough stock"})
         }
 
-        StoreStorage.insert(ReceiverId,newStore)
-        }else {
-          const otherStore = {
-            StockId,
-            ProgramId: StockProgramOpt.ProgramId,
-            StockName: StockOpt.StockName,
-            Quantity
-          }
-          receiveStoreOpt.stores.push(otherStore)
-    StoreStorage.insert(ReceiverId,receiveStoreOpt)
-        }
-
-        StoreOpt.stores[ItemsExist].Quantity = newQuantity.toString();
-
-        StoreStorage.insert(UserProfileOpt.ProfileId,StoreOpt)
-      const NewTransaction : StockTransactions = {
+        const NewTransaction : StockTransactions = {
           TransactionId: uuidv4(),
           StockId,
           SenderId: UserProfileOpt.ProfileId,
           ReceiverId,
           Quantity,
-          TransactionType: { TRANSFER: "DISTRIBUTE"},
-          Status: { PENDING:"ACCEPTED"},
+          TransactionType: { DISTRIBUTE: "DISTRIBUTE"},
+          Status: { PENDING: "PENDING"},
           CreatedAt: getCurrentDate()
         }
-         
-        StockTransactionStorage.insert(NewTransaction.TransactionId,NewTransaction);
-        return Ok("Sent to be approved!")
+
+        StockTransactionStorage.insert(NewTransaction.TransactionId, NewTransaction);
+        return Ok("Distribution pending approval")
       }catch(error: any) {
         return Err({Error:`Error occured ${error.message}`})
       }

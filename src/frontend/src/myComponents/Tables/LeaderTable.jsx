@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Link } from "react-router-dom";
@@ -8,14 +8,20 @@ import { useDispatch,useSelector} from "react-redux";
 import TableSkeleton from "../skeletors/tableSkeletor";
 import { GetAllProgramThunk } from "../../Redux/action/GetAllProgram";
 import { ProgramStatsThunk } from "../../Redux/action/ProgramStat";
+import { getProfile } from "../../utils/endpoints";
 
 
 
 const LeaderTable = ({setStats}) => {
   const dispatch = useDispatch();
+  const [myProfileId, setMyProfileId] = useState(null);
+
   useEffect(()=>{
     dispatch(GetAllProgramThunk())
     dispatch(ProgramStatsThunk())
+    getProfile().then((res) => {
+      if (res.Ok) setMyProfileId(res.Ok.ProfileId);
+    });
   },[dispatch])
 
   const columns = [
@@ -60,6 +66,12 @@ const LeaderTable = ({setStats}) => {
  
     const { loadingz,Allprogram,Errorz  } = useSelector((state)=> state.AllProgram)
     const  {  ProgramStats, } = useSelector((state)=> state.ProgramStat)
+
+    const myPrograms = useMemo(() => {
+      if (!Allprogram || !myProfileId) return [];
+      return Allprogram.filter((p) => p.LocalLeaders.includes(myProfileId));
+    }, [Allprogram, myProfileId]);
+
     useMemo(()=>{
         setStats(ProgramStats)
     },[ProgramStats])
@@ -75,18 +87,18 @@ const LeaderTable = ({setStats}) => {
           },
         }}
       >
-        {loadingz?
+        {loadingz || myProfileId === null?
      (<div style={{textAlign: "center"}}>
       <TableSkeleton />
-   </div>):  
-   (Allprogram?.length  === 0|| Errorz)?(
+   </div>):
+   (myPrograms.length === 0 || Errorz)?(
     <div style={{textAlign: "center"}}>
-          <p>No Program or there is error! Reload</p>
+          <p>No programs assigned to you yet.</p>
     </div>
   ):(
       <DataGrid
           getRowId={(row)=>(row.ProgramId)}
-          rows={Allprogram}
+          rows={myPrograms}
           columns={columns}
           slots={{
             toolbar: GridToolbar,
