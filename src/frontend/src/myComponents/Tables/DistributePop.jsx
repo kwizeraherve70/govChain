@@ -19,9 +19,10 @@ import { DistributeThunk } from "@/Redux/action/Distribute";
 import { ProgramCitizensThunk } from "@/Redux/action/ProgramCitizens";
 import { DistributeValid, TransferValid } from "@/validation/TransferValid";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ToastError } from "@/utils/toast";
 
 const DistributePop=({ProgramId,StockId})=>{
-  const [ReceiverId, setReceiver ] = useState(" ");
+  const [ReceiverId, setReceiver ] = useState("");
     const dispatch = useDispatch()
   const GetLeader=()=>{
     dispatch(ProgramCitizensThunk({ProgramId}))
@@ -39,17 +40,17 @@ const DistributePop=({ProgramId,StockId})=>{
     resolver: yupResolver(DistributeValid),
   });
   const submit=(data)=>{
-    console.log(data)
-    if(ReceiverId) {
-      const cleanData = {
-        ...data,
-        StockId,
-        Quantity: data.Quantity.toString(),
-        ReceiverId
-      }
-      console.log(cleanData)
-      dispatch(DistributeThunk(cleanData))
+    if(!ReceiverId.trim()) {
+      ToastError("Please select a citizen to distribute to");
+      return;
     }
+    const cleanData = {
+      ...data,
+      StockId,
+      Quantity: data.Quantity.toString(),
+      ReceiverId
+    }
+    dispatch(DistributeThunk(cleanData))
   }
   const {   Loading, ProgramCitizens, Error, } = useSelector((state)=>state.ProgramCitizens)
   const { Dloading  } = useSelector((state)=>state.Distribute)
@@ -79,13 +80,14 @@ const DistributePop=({ProgramId,StockId})=>{
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="Quantity" className="text-right">Quantity</Label>
               <Input id="Quantity"  type="number" {...register("Quantity")} className="col-span-3" placeholder="0" />
+              {errors.Quantity && <p className="col-span-4 text-red-500 text-sm">{errors.Quantity.message}</p>}
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="Description" className="text-right">Receiver Citizen</Label>
             
             <Select onValueChange={ReceiverChange}>
             <SelectTrigger className="w-full">
-              <SelectValue className="px-9" placeholder="Local Leader" />
+              <SelectValue className="px-9" placeholder="Select Citizen" />
             </SelectTrigger>
             <SelectContent className="w-full">
               {ProgramCitizens?.map((item)=>(
@@ -98,7 +100,7 @@ const DistributePop=({ProgramId,StockId})=>{
           <DialogFooter>
           <Button 
              className={`relative px-6 py-2 text-white font-semibold rounded-lg transition-all ${
-                Dloading && "bg-gray-900 opacity-50 cursor-not-allowed"}`}x
+                Dloading && "bg-gray-900 opacity-50 cursor-not-allowed"}`}
              type="submit"
              disabled={Dloading}
              >{

@@ -5,6 +5,7 @@ import { ApproveTransaction } from "../../utils/endpoints";
 export const ApproveTransactionThunk = createAsyncThunk("ApproveTransaction",
 async(TransactionId, { rejectWithValue }) => {
     try {
+        console.log('the issue is here ', TransactionId)
        const repo = await ApproveTransaction(TransactionId);
        if (repo.Ok) {
         ToastSuccess("Transaction approved");

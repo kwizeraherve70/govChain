@@ -19,9 +19,10 @@ import { TransferThunk } from "@/Redux/action/Transfer";
 import { ProgramLeadersThunk } from "@/Redux/action/ProgramLeader";
 import { TransferValid } from "@/validation/TransferValid";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ToastError } from "@/utils/toast";
 
 const TransferPop=({ProgramId,StockId})=>{
-  const [ReceiverId, setReceiver ] = useState(" ");
+  const [ReceiverId, setReceiver ] = useState("");
     const dispatch = useDispatch()
   const GetLeader=()=>{
     dispatch(ProgramLeadersThunk({ProgramId}))
@@ -39,14 +40,16 @@ const TransferPop=({ProgramId,StockId})=>{
     resolver: yupResolver(TransferValid),
   });
   const submit=(data)=>{
-    if(ReceiverId) {
-      const cleanData = {
-        ...data,
-        Quantity: data.Quantity.toString(),
-        ReceiverId
-      }
-      dispatch(TransferThunk({cleanData}))
+    if(!ReceiverId.trim()) {
+      ToastError("Please select a receiver leader");
+      return;
     }
+    const cleanData = {
+      ...data,
+      Quantity: data.Quantity.toString(),
+      ReceiverId
+    }
+    dispatch(TransferThunk({cleanData}))
   }
   const { loadingz, ProgramLeaders, Errorz } = useSelector((state)=>state.ProgramLeaders)
   const { loading  } = useSelector((state)=>state.Transfer)
@@ -76,6 +79,7 @@ const TransferPop=({ProgramId,StockId})=>{
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="Quantity" className="text-right">Quantity</Label>
               <Input id="Quantity"  type="number" {...register("Quantity")} className="col-span-3" placeholder="0" />
+              {errors.Quantity && <p className="col-span-4 text-red-500 text-sm">{errors.Quantity.message}</p>}
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="Description" className="text-right">Receiver Leader</Label>

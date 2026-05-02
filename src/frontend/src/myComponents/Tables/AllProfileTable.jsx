@@ -96,13 +96,13 @@ const AllProfileTable = () => {
     <div className="col-span-full">
 
 <Box sx={{ height: 400, width: '100%', backgroundColor: 'transparent', p: 2 }}>
-      <h2>Transaction Table</h2>
+      <h2 className="gradient-text text-2xl font-bold mb-3">All Profiles</h2>
       {loading?
-     (<div style={{textAlign: "center"}}>
+     (<div className="text-center">
       <TableSkeleton />
-   </div>):  
+   </div>):
    (GetAllProfile?.length  === 0|| error)?(
-    <div style={{textAlign: "center"}}>
+    <div className="text-center text-white/50 py-8">
           <p>No Profile or there is error! Reload</p>
     </div>
   ):(
@@ -119,6 +119,7 @@ const AllProfileTable = () => {
           color: 'rgba(255,255,255,0.75)',
           fontFamily: 'inherit',
           backgroundColor: 'rgba(255,255,255,0.03)',
+          '--DataGrid-containerBackground': 'rgba(255,255,255,0.04)',
           '& .MuiDataGrid-columnHeaders': {
             backgroundColor: 'rgba(255,255,255,0.04)',
             color: 'rgba(255,255,255,0.5)',
@@ -141,6 +142,8 @@ const AllProfileTable = () => {
           '& .MuiIconButton-root': { color: 'rgba(255,255,255,0.4)' },
           '& .MuiDataGrid-footerContainer': { borderTop: '1px solid rgba(255,255,255,0.08)' },
           '& .MuiInputBase-root': { color: 'rgba(255,255,255,0.6)' },
+          '& .MuiDataGrid-overlayWrapper': { minHeight: '80px' },
+          '& .MuiDataGrid-overlay': { backgroundColor: 'rgba(9,10,24,0.8)', color: 'rgba(255,255,255,0.4)' },
         }}
   />
       

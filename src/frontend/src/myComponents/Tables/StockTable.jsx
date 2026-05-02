@@ -37,11 +37,12 @@ import { GetAllProgramThunk } from "@/Redux/action/GetAllProgram";
 import { GetAllStockThunk } from "@/Redux/action/GetAllStock";
 import { StockStatsThunk } from "@/Redux/action/StockStat";
 import TransferPop from "./TransferPop";
+import { ToastError } from "@/utils/toast";
 
 
 
 const StockTable = ({setStockStats}) => {
-  const [Program, setProgram ] = useState(" ")
+  const [Program, setProgram ] = useState("")
   const dispatch = useDispatch();
   useEffect(()=>{
     dispatch(GetAllProgramThunk())
@@ -95,18 +96,18 @@ const StockTable = ({setStockStats}) => {
       resolver: yupResolver(StockValid),
     });
     const submit=async(data)=>{
-      if(Program){
-        const cleanData = {
-          ...data,
-          Quantity:data.Quantity.toString(),
-          ProgramId:Program
-        }
-        await  dispatch(CreateStockThunk(cleanData))
-        dispatch(GetAllStockThunk())
-        dispatch(StockStatsThunk())
+      if(!Program.trim()){
+        ToastError("Please select a program for this stock");
+        return;
       }
-      
-   
+      const cleanData = {
+        ...data,
+        Quantity:data.Quantity.toString(),
+        ProgramId:Program
+      }
+      await dispatch(CreateStockThunk(cleanData))
+      dispatch(GetAllStockThunk())
+      dispatch(StockStatsThunk())
     }
     const { load  } = useSelector((state)=>state.CreateStock)
     const  { loading,AllStock,errorz } = useSelector((state)=>state.AllStocks)
@@ -120,15 +121,15 @@ const StockTable = ({setStockStats}) => {
       <div className="flex justify-end mb-3 font-bold">
   <Dialog>
     <DialogTrigger asChild>
-      <Button><FaPlus /> New Stock</Button>
+      <Button className="btn-web3 flex items-center gap-2"><FaPlus /> New Stock</Button>
     </DialogTrigger>
     <DialogContent className="sm:max-w-[425px]">
       {loadingz?
-     (<div className="text-center">
-      <p>Loading....</p>
-   </div>):  
+     (<div className="text-center text-white/50 py-4">
+      <p>Loading...</p>
+   </div>):
    (Allprogram?.length  === 0|| Errorz)?(
-    <div style={{textAlign: "center"}}>
+    <div className="text-center text-white/50 py-4">
           <p>No Program or there is error! Reload</p>
     </div>
   ):(
@@ -139,13 +140,12 @@ const StockTable = ({setStockStats}) => {
    <form onSubmit={handleSubmit(submit)}>
    <div className="grid gap-4 py-4">
     <div className="grid grid-cols-4 items-center gap-4">
-      <Label htmlFor="name" className="text-right">Item</Label>
+      <Label htmlFor="name" className="text-right">Program</Label>
       <Select onValueChange={handleProgram}>
-            <SelectTrigger className="w-full">
-              <SelectValue className="px-9" placeholder="Local Leader" />
+            <SelectTrigger className="w-full col-span-3">
+              <SelectValue className="px-9" placeholder="Select a program" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem className="w-full" value={null}>Program</SelectItem>
               {Allprogram?.map((item)=>(
                  <SelectItem value={item.ProgramId} key={item.ProgramId}>{item.Name}</SelectItem>
               ))}
@@ -166,7 +166,7 @@ const StockTable = ({setStockStats}) => {
   <DialogFooter>
   <Button 
     className={`relative px-6 py-2 text-white font-semibold rounded-lg transition-all ${
-    load && "bg-gray-900 opacity-50 cursor-not-allowed"}`}x
+    load && "bg-gray-900 opacity-50 cursor-not-allowed"}`}
                type="submit"
                disabled={load}
                >{
@@ -194,11 +194,11 @@ const StockTable = ({setStockStats}) => {
         }}
       >
        {loading?
-     (<div style={{textAlign: "center"}}>
+     (<div className="text-center">
       <TableSkeleton />
-   </div>):  
+   </div>):
    (AllStock?.length  === 0|| errorz)?(
-    <div style={{textAlign: "center"}}>
+    <div className="text-center text-white/50 py-8">
           <p>No Stock or there is error! Reload</p>
     </div>
   ):(
@@ -215,6 +215,7 @@ const StockTable = ({setStockStats}) => {
       color: 'rgba(255,255,255,0.75)',
       fontFamily: 'inherit',
       backgroundColor: 'rgba(255,255,255,0.03)',
+      '--DataGrid-containerBackground': 'rgba(255,255,255,0.04)',
       '& .MuiDataGrid-columnHeaders': {
         backgroundColor: 'rgba(255,255,255,0.04)',
         color: 'rgba(255,255,255,0.5)',
@@ -237,6 +238,8 @@ const StockTable = ({setStockStats}) => {
       '& .MuiIconButton-root': { color: 'rgba(255,255,255,0.4)' },
       '& .MuiDataGrid-footerContainer': { borderTop: '1px solid rgba(255,255,255,0.08)' },
       '& .MuiInputBase-root': { color: 'rgba(255,255,255,0.6)' },
+      '& .MuiDataGrid-overlayWrapper': { minHeight: '80px' },
+      '& .MuiDataGrid-overlay': { backgroundColor: 'rgba(9,10,24,0.8)', color: 'rgba(255,255,255,0.4)' },
     }}
   />
       )

@@ -7,11 +7,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetAllLeaderThunk } from "@/Redux/action/GetAllLeader";
 import { BeatLoader } from "react-spinners";
 import { AddLeaderToProgramThunk } from "@/Redux/action/AddLeader";
+import { ToastError } from "@/utils/toast";
 
 
 
 const AddLeader=({ProgramId})=>{
-    const [addLeader, setAddLeader] = useState(" ")
+    const [addLeader, setAddLeader] = useState("")
     const dispatch = useDispatch()
     const GetLeaders=()=>{
       dispatch(GetAllLeaderThunk())
@@ -22,10 +23,12 @@ const AddLeader=({ProgramId})=>{
     }
 
     const Sender=()=>{
-        if(addLeader){
-            const LeaderId = addLeader
-          dispatch(AddLeaderToProgramThunk({ProgramId,LeaderId}))
+        if(!addLeader.trim()){
+            ToastError("Please select a local leader");
+            return;
         }
+        const LeaderId = addLeader
+        dispatch(AddLeaderToProgramThunk({ProgramId,LeaderId}))
     }
    
    

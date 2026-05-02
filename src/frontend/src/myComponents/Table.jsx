@@ -62,7 +62,7 @@ const Table = ({setStats}) => {
       renderCell: (params) => (
         <Link
           to={`/Admin/Programs/${params.row.ProgramId}/Request`}
-          style={{ color: "blue", textDecoration: "underline" }}
+          className="text-web3-purple underline hover:text-web3-accent"
         >
           {params.row.RequestCitizens.length}
         </Link>
@@ -118,7 +118,7 @@ const Table = ({setStats}) => {
       <div className="flex justify-end mb-3 font-bold">
         <Dialog>
           <DialogTrigger asChild>
-            <Button><FaPlus /> New Program</Button>
+            <Button className="btn-web3 flex items-center gap-2"><FaPlus /> New Program</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
@@ -145,7 +145,7 @@ const Table = ({setStats}) => {
             <DialogFooter>
             <Button 
                className={`relative px-6 py-2 text-white font-semibold rounded-lg transition-all ${
-                loading && "bg-gray-900 opacity-50 cursor-not-allowed"}`}x
+                loading && "bg-gray-900 opacity-50 cursor-not-allowed"}`}
                type="submit"
                disabled={loading}
                >{
@@ -171,11 +171,11 @@ const Table = ({setStats}) => {
         }}
       >
         {loadingz?
-     (<div style={{textAlign: "center"}}>
+     (<div className="text-center">
       <TableSkeleton />
-   </div>):  
+   </div>):
    (Allprogram?.length  === 0|| Errorz)?(
-    <div style={{textAlign: "center"}}>
+    <div className="text-center text-white/50 py-8">
           <p>No Program or there is error! Reload</p>
     </div>
   ):(
@@ -192,6 +192,7 @@ const Table = ({setStats}) => {
             color: 'rgba(255,255,255,0.75)',
             fontFamily: 'inherit',
             backgroundColor: 'rgba(255,255,255,0.03)',
+            '--DataGrid-containerBackground': 'rgba(255,255,255,0.04)',
             '& .MuiDataGrid-columnHeaders': {
               backgroundColor: 'rgba(255,255,255,0.04)',
               color: 'rgba(255,255,255,0.5)',
@@ -215,6 +216,8 @@ const Table = ({setStats}) => {
             '& .MuiDataGrid-footerContainer': { borderTop: '1px solid rgba(255,255,255,0.08)' },
             '& .MuiInputBase-root': { color: 'rgba(255,255,255,0.6)' },
             '& .MuiCheckbox-root': { color: 'rgba(124,58,237,0.65)' },
+            '& .MuiDataGrid-overlayWrapper': { minHeight: '80px' },
+            '& .MuiDataGrid-overlay': { backgroundColor: 'rgba(9,10,24,0.8)', color: 'rgba(255,255,255,0.4)' },
           }}
         />
       )}  

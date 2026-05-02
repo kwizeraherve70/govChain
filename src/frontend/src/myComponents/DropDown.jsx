@@ -25,16 +25,16 @@ const DropdownMenu = ({ position,ProfileId }) => {
         top: position?.top || 0,
         left: position?.left || 0,
       }}
-      className="fixed z-50 w-32 bg-white dark:bg-gray-700 rounded-md shadow-lg"
+      className="fixed z-50 w-40 bg-[#0c0d22] border border-white/10 rounded-xl shadow-xl backdrop-blur-md"
     >
       <div className="py-1" role="menu" aria-orientation="vertical">
-        <a href="#" onClick={()=>{RoleChanger("HIGH_OFFICIAL")}} className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" role="menuitem">
+        <a href="#" onClick={()=>{RoleChanger("HIGH_OFFICIAL")}} className="block px-4 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white transition-colors" role="menuitem">
           HIGH_OFFICIAL
         </a>
-        <a href="#" onClick={()=>{RoleChanger("LOCAL_LEADER")}} className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" role="menuitem">
+        <a href="#" onClick={()=>{RoleChanger("LOCAL_LEADER")}} className="block px-4 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white transition-colors" role="menuitem">
           LOCAL_LEADER
         </a>
-        <a href="#" onClick={()=>{RoleChanger("CITIZEN")}} className="block px-4 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600" role="menuitem">
+        <a href="#" onClick={()=>{RoleChanger("CITIZEN")}} className="block px-4 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white transition-colors" role="menuitem">
           CITIZEN
         </a>
       </div>

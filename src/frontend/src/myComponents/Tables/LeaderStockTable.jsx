@@ -52,11 +52,11 @@ const LeaderStockTable = () => {
         }}
       >
        {loading?
-     (<div style={{textAlign: "center"}}>
+     (<div className="text-center">
       <TableSkeleton />
-   </div>):  
+   </div>):
    (GetStore?.length  === 0|| errorz)?(
-    <div style={{textAlign: "center"}}>
+    <div className="text-center text-white/50 py-8">
           <p>No Stock or there is error! Reload</p>
     </div>
   ):(
@@ -73,6 +73,7 @@ const LeaderStockTable = () => {
           color: 'rgba(255,255,255,0.75)',
           fontFamily: 'inherit',
           backgroundColor: 'rgba(255,255,255,0.03)',
+          '--DataGrid-containerBackground': 'rgba(255,255,255,0.04)',
           '& .MuiDataGrid-columnHeaders': {
             backgroundColor: 'rgba(255,255,255,0.04)',
             color: 'rgba(255,255,255,0.5)',
@@ -95,6 +96,8 @@ const LeaderStockTable = () => {
           '& .MuiIconButton-root': { color: 'rgba(255,255,255,0.4)' },
           '& .MuiDataGrid-footerContainer': { borderTop: '1px solid rgba(255,255,255,0.08)' },
           '& .MuiInputBase-root': { color: 'rgba(255,255,255,0.6)' },
+          '& .MuiDataGrid-overlayWrapper': { minHeight: '80px' },
+          '& .MuiDataGrid-overlay': { backgroundColor: 'rgba(9,10,24,0.8)', color: 'rgba(255,255,255,0.4)' },
         }}
   />
       )

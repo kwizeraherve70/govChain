@@ -513,6 +513,10 @@ export default Canister({
 
     AllTransactions: query([],Result(Vec(StockTransactions), Message),()=>{
       try{
+          const UserProfileOpt = UserProfileStorage.get(ic.caller())
+          if(!UserProfileOpt){
+            return Err({NoProfile: "No Profile"})
+          }
           const Transactions = StockTransactionStorage.values()
           if(Transactions.length== 0 ){
             return Err({NotFound: "Empty transaction"})
@@ -737,6 +741,11 @@ export default Canister({
         ){
           return Err({Unauthorized: "Access Denied"})
         }
+        if(RoleAuth(UserProfileOpt.Role,"LOCAL_LEADER") &&
+           !ProgramOpt.LocalLeaders.includes(UserProfileOpt.ProfileId)
+        ){
+          return Err({Unauthorized: "You are not assigned to this program"})
+        }
 
         if(ProgramOpt.RequestCitizens.length == 0) {
           return Err({NotFound: "NO requests"})
@@ -767,6 +776,11 @@ export default Canister({
         ){
           return Err({Unauthorized: "Access Denied"})
         }
+        if(RoleAuth(UserProfileOpt.Role,"LOCAL_LEADER") &&
+           !ProgramOpt.LocalLeaders.includes(UserProfileOpt.ProfileId)
+        ){
+          return Err({Unauthorized: "You are not assigned to this program"})
+        }
 
         if(!ProgramOpt.RequestCitizens.includes(ProfileId) ||
         ProgramOpt.Citizens.includes(ProfileId)
@@ -791,7 +805,46 @@ export default Canister({
 
        return Ok("Approved successfully")
       }catch(error: any) {
-        return Err({Err: `Error occured ${error.message}`})
+        return Err({Error: `Error occured ${error.message}`})
+      }
+    }),
+
+    RejectRequest: update([text, text], Result(text, Message), (ProgramId, ProfileId) => {
+      try {
+        const UserProfileOpt = UserProfileStorage.get(ic.caller());
+        const ProgramOpt = ProgramStorage.get(ProgramId);
+
+        if (!ProgramOpt) {
+          return Err({ NotFound: "Program not found" });
+        }
+        if (!UserProfileOpt) {
+          return Err({ NoProfile: "No Profile" });
+        }
+        if (
+          !RoleAuth(UserProfileOpt.Role, "HIGH_OFFICIAL") &&
+          !RoleAuth(UserProfileOpt.Role, "LOCAL_LEADER")
+        ) {
+          return Err({ Unauthorized: "Access Denied" });
+        }
+        if (
+          RoleAuth(UserProfileOpt.Role, "LOCAL_LEADER") &&
+          !ProgramOpt.LocalLeaders.includes(UserProfileOpt.ProfileId)
+        ) {
+          return Err({ Unauthorized: "You are not assigned to this program" });
+        }
+        if (!ProgramOpt.RequestCitizens.includes(ProfileId)) {
+          return Err({ NotFound: "No pending request found for this citizen" });
+        }
+
+        // Remove citizen from request list without enrolling them
+        ProgramOpt.RequestCitizens = ProgramOpt.RequestCitizens.filter(
+          (id: text) => id !== ProfileId
+        );
+        ProgramStorage.insert(ProgramOpt.ProgramId, ProgramOpt);
+
+        return Ok("Request rejected");
+      } catch (error: any) {
+        return Err({ Error: `Error occured ${error.message}` });
       }
     }),
 

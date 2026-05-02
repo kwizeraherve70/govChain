@@ -67,7 +67,7 @@ const ProfileForm = () => {
 
   const { hasProfile, name, Role } = useContext(AuthContext);
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, trigger, formState: { errors } } = useForm({
     resolver: yupResolver(ProfileValid),
   });
 
@@ -109,7 +109,15 @@ const ProfileForm = () => {
     }));
   };
 
-  const next = () => setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  const STEP_FIELDS = [
+    ["Fullname", "Email", "NationalId", "Phone"],
+    ["Province", "District", "Sector", "Cell"],
+  ];
+
+  const next = async () => {
+    const valid = await trigger(STEP_FIELDS[step]);
+    if (valid) setStep((s) => Math.min(s + 1, STEPS.length - 1));
+  };
   const prev = () => setStep((s) => Math.max(s - 1, 0));
 
   return (

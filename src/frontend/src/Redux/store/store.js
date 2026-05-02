@@ -10,6 +10,7 @@ import GetAllProfileSlice from '../slice/GetAllProfileSlice';
 import CitizenRequestSlice from '../slice/CitizenRequestSlice';
 import ViewRequestSlice from '../slice/ViewRequestSlice';
 import ApproveRequestSlice from '../slice/ApproveRequestSlice';
+import RejectRequestSlice from '../slice/RejectRequestSlice';
 import TransferSlice from '../slice/TransferSlice';
 import ProgramLeadersSlice from "../slice/ProgramLeaderSlice"
 import ProgramCitizensSlice from '../slice/ProgramCitizensSlice';
@@ -40,6 +41,7 @@ const store = configureStore({
 		Citizenrequest: CitizenRequestSlice,
 		Viewrequest: ViewRequestSlice,
 		Approverequest: ApproveRequestSlice,
+		Rejectrequest: RejectRequestSlice,
 		Transfer: TransferSlice,
 		ProgramCitizens: ProgramCitizensSlice,
 	    ProgramLeaders:ProgramLeadersSlice,

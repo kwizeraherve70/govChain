@@ -55,7 +55,7 @@ const routes = [
 		children: [
 			{ path: "/", element: <HomePage/>},
 			{ path: 'Profile/', element: <AuthContextProvider><ProfileForm /></AuthContextProvider> },
-			{ path: "Transactions" , element:<Transaction/>},
+			{ path: "Transactions" , element:<AuthContextProvider><Transaction/></AuthContextProvider>},
 		],
 
 	},

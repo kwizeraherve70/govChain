@@ -9,6 +9,7 @@ import TableSkeleton from "../skeletors/tableSkeletor";
 import { GetAllProgramThunk } from "../../Redux/action/GetAllProgram";
 import { ProgramStatsThunk } from "../../Redux/action/ProgramStat";
 import { getProfile } from "../../utils/endpoints";
+import EnrolledCitizensModal from './EnrolledCitizensModal';
 
 
 
@@ -38,23 +39,31 @@ const LeaderTable = ({setStats}) => {
     },
     {
       field: "RequestCitizens",
-      headerName: "Requests",
-      width: 150,
+      headerName: "Pending Requests",
+      width: 170,
       renderCell: (params) => (
         <Link
           to={`/Leader/Programs/${params.row.ProgramId}/Request`}
-          style={{ color: "blue", textDecoration: "underline" }}
+          className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-web3-accent/10 border border-web3-accent/30 text-web3-accent hover:bg-web3-accent/20 text-xs font-medium transition-colors"
         >
-          {params.row.RequestCitizens.length}
+          Enroll Citizens
+          {params.row.RequestCitizens.length > 0 && (
+            <span className="bg-web3-accent text-white text-[10px] font-bold rounded-full px-1.5 py-0.5 leading-none">
+              {params.row.RequestCitizens.length}
+            </span>
+          )}
         </Link>
       ),
     },
-    { 
-      field: "Citizens", 
-      headerName: "Citizens", 
+    {
+      field: "Citizens",
+      headerName: "Citizens",
       width: 150,
-      renderCell: (params)=> (
-        params.row.Citizens.length
+      renderCell: (params) => (
+        <EnrolledCitizensModal
+          ProgramId={params.row.ProgramId}
+          count={params.row.Citizens.length}
+        />
       )
     },
     { field: "Beneficials", headerName: "Beneficials", width: 150, 
@@ -88,11 +97,11 @@ const LeaderTable = ({setStats}) => {
         }}
       >
         {loadingz || myProfileId === null?
-     (<div style={{textAlign: "center"}}>
+     (<div className="text-center">
       <TableSkeleton />
    </div>):
    (myPrograms.length === 0 || Errorz)?(
-    <div style={{textAlign: "center"}}>
+    <div className="text-center text-white/50 py-8">
           <p>No programs assigned to you yet.</p>
     </div>
   ):(
@@ -109,6 +118,7 @@ const LeaderTable = ({setStats}) => {
           color: 'rgba(255,255,255,0.75)',
           fontFamily: 'inherit',
           backgroundColor: 'rgba(255,255,255,0.03)',
+          '--DataGrid-containerBackground': 'rgba(255,255,255,0.04)',
           '& .MuiDataGrid-columnHeaders': {
             backgroundColor: 'rgba(255,255,255,0.04)',
             color: 'rgba(255,255,255,0.5)',
@@ -131,6 +141,8 @@ const LeaderTable = ({setStats}) => {
           '& .MuiIconButton-root': { color: 'rgba(255,255,255,0.4)' },
           '& .MuiDataGrid-footerContainer': { borderTop: '1px solid rgba(255,255,255,0.08)' },
           '& .MuiInputBase-root': { color: 'rgba(255,255,255,0.6)' },
+          '& .MuiDataGrid-overlayWrapper': { minHeight: '80px' },
+          '& .MuiDataGrid-overlay': { backgroundColor: 'rgba(9,10,24,0.8)', color: 'rgba(255,255,255,0.4)' },
         }}
         />
       )}  

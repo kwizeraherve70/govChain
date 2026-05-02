@@ -67,6 +67,10 @@ const ApproveRequest=async(ProgramId,ProfileId)=>{
   return await window.canister.GovChainApi.ApproveRequest(ProgramId,ProfileId)
 }
 
+const RejectRequest=async(ProgramId,ProfileId)=>{
+  return await window.canister.GovChainApi.RejectRequest(ProgramId,ProfileId)
+}
+
 const Transfer= async(Payload)=>{
   console.log("Transfer",Payload)
   return await window.canister.GovChainApi.Transfer(Payload)
@@ -97,6 +101,7 @@ const MyTransactions = async()=>{
 }
 
 const ApproveTransaction = async(TransactionId) => {
+ console.log('or the issue is here',TransactionId)
   return await window.canister.GovChainApi.ApproveTransaction(TransactionId)
 }
 
@@ -125,6 +130,7 @@ export {
   CitizenRequest,
   ViewRequest,
   ApproveRequest,
+  RejectRequest,
 
   Transfer,
   Distribute,

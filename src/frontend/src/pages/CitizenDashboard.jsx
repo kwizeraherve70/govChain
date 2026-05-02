@@ -5,6 +5,7 @@ import Chart from "../myComponents/Chart";
 import BarChart from "../myComponents/BarChart";
 import { GetStoreThunk } from "@/Redux/action/MyStock";
 import { MyTransactionsThunk } from "@/Redux/action/MyTransactions";
+import { GetAllProgramThunk } from "@/Redux/action/GetAllProgram";
 import { getProfile } from "@/utils/endpoints";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import TableSkeleton from "@/myComponents/skeletors/tableSkeletor";
@@ -18,21 +19,34 @@ const statusStyles = {
 const CitizenDashboard = () => {
     const dispatch = useDispatch();
     const [programsJoined, setProgramsJoined] = useState(0);
+    const [pendingRequests, setPendingRequests] = useState(0);
 
     const { GetStore }        = useSelector((state) => state.GetStore);
     const { load, MyTransactions, error } = useSelector((state) => state.MyTransactions);
+    const { Allprogram } = useSelector((state) => state.AllProgram);
 
     useEffect(() => {
         dispatch(GetStoreThunk());
         dispatch(MyTransactionsThunk());
+        dispatch(GetAllProgramThunk());
+    }, [dispatch]);
 
-        // Get the citizen's own profile to read ProgramsJoined
+    // Recompute enrolled + pending counts whenever programs list loads/changes
+    useEffect(() => {
+        if (!Allprogram) return;
         getProfile().then((res) => {
             if (res.Ok) {
+                const myId = res.Ok.ProfileId;
                 setProgramsJoined(res.Ok.ProgramsJoined?.length || 0);
+                const count = Allprogram.filter(
+                    (p) =>
+                        p.RequestCitizens.includes(myId) &&
+                        !p.Citizens.includes(myId)
+                ).length;
+                setPendingRequests(count);
             }
         });
-    }, [dispatch]);
+    }, [Allprogram]);
 
     const rows = (MyTransactions || []).map((tx) => ({
         ...tx,
@@ -65,10 +79,11 @@ const CitizenDashboard = () => {
                 <p className="text-white/40 text-sm mt-1">Citizen overview · Your on-chain activity</p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
                 <DashCard name="Programs Enrolled"   account={programsJoined}              index={0} />
-                <DashCard name="Materials Received"  account={GetStore?.length || 0}       index={1} />
-                <DashCard name="My Transactions"     account={MyTransactions?.length || 0} index={2} />
+                <DashCard name="Pending Requests"    account={pendingRequests}             index={1} />
+                <DashCard name="Materials Received"  account={GetStore?.length || 0}       index={2} />
+                <DashCard name="My Transactions"     account={MyTransactions?.length || 0} index={3} />
             </div>
 
             <div className="grid grid-cols-12 gap-5">
