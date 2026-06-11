@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { RejectRequestThunk } from "@/Redux/action/RejectRequest";
 import { ViewRequestThunk } from "@/Redux/action/ViewRequested";
+import { GetAllProgramThunk } from "@/Redux/action/GetAllProgram";
 import { Button } from "@/components/ui/button";
 import { BeatLoader } from "react-spinners";
 
@@ -16,6 +17,8 @@ const RejectAction = ({ ProgramId, ProfileId }) => {
       await dispatch(RejectRequestThunk({ ProgramId, ProfileId })).unwrap();
       // Refresh the request list so the rejected row disappears immediately
       dispatch(ViewRequestThunk(ProgramId));
+      // Refresh programs so the RequestCitizens badge count updates in LeaderTable
+      dispatch(GetAllProgramThunk());
     } catch (_) {
       // error already toasted inside the thunk
     } finally {

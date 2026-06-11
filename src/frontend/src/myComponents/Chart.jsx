@@ -1,34 +1,42 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
+import { useDispatch, useSelector } from 'react-redux';
+import { GetAllProfileThunk } from '@/Redux/action/GetAllProfile';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const data = [
-  { Role: 'HIGH_OFFICIAL', count: 0 },
-  { Role: 'LOCAL_LEADER', count: 5 },
-  { Role: 'CITIZEN', count: 5 },
-];
+const ROLES = ['HIGH_OFFICIAL', 'LOCAL_LEADER', 'CITIZEN'];
 
 const Chart = () => {
-  const roleLabels = data.map((item) => item.Role);
-  const roleCounts = data.map((item) => item.count);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(GetAllProfileThunk());
+  }, [dispatch]);
+
+  const { GetAllProfile } = useSelector((state) => state.AllProfile);
+  const profiles = GetAllProfile || [];
+
+  const roleCounts = ROLES.map(
+    (role) => profiles.filter((p) => Object.keys(p.Role)[0] === role).length
+  );
 
   const chartData = {
-    labels: roleLabels,
+    labels: ROLES,
     datasets: [
       {
         label: 'Number of Users by Role',
         data: roleCounts,
         backgroundColor: [
-          'rgba(124, 58, 237, 0.75)',  // Violet — High Official
-          'rgba(147, 51, 234, 0.75)',  // Purple — Local Leader
-          'rgba(247, 37, 133, 0.75)', // Pink   — Citizen
+          'rgba(234, 179,   8, 0.85)',  // Gold  — High Official
+          'rgba(  6, 182, 212, 0.85)',  // Teal  — Local Leader
+          'rgba(247,  37, 133, 0.85)',  // Pink  — Citizen
         ],
         borderColor: [
-          'rgba(124, 58, 237, 1)',
-          'rgba(147, 51, 234, 1)',
-          'rgba(247, 37, 133, 1)',
+          'rgba(234, 179,   8, 1)',
+          'rgba(  6, 182, 212, 1)',
+          'rgba(247,  37, 133, 1)',
         ],
         borderWidth: 2,
       },

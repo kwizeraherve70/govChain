@@ -2,6 +2,9 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ToastError } from "../../utils/toast";
 import { ViewRequest } from "@/utils/endpoints";
 
+const getRoleFallbackPath = () =>
+    window.location.pathname.startsWith("/Leader") ? "/Leader/Programs" : "/Admin/Programs";
+
 export const ViewRequestThunk = createAsyncThunk("ViewRequest",
 async(data,{rejectWithValue})=>{
     try{
@@ -14,9 +17,9 @@ async(data,{rejectWithValue})=>{
         {repo.Err.NotFound && ToastError(repo.Err.NotFound)}
         {repo.Err.InvalidPayload && ToastError(repo.Err.InvalidPayload)}
         {repo.Err.NoProfile && (ToastError(repo.Err.NoProfile),
-            setTimeout(()=>{window.location.href="/"}, 3000))}
+            setTimeout(()=>{window.location.href=getRoleFallbackPath()}, 3000))}
         {repo.Err.Unauthorized && (ToastError(repo.Err.Unauthorized),
-            setTimeout(()=>{window.location.href="/"}, 3000))}
+            setTimeout(()=>{window.location.href=getRoleFallbackPath()}, 3000))}
         return rejectWithValue(repo.Err)
        }
 

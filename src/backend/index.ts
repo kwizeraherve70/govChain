@@ -644,9 +644,12 @@ export default Canister({
           return Err({Error: "Already Exist"})
         }
 
-        ProgramOpt.LocalLeaders.push(LeaderId)
+        const updatedProgram = {
+          ...ProgramOpt,
+          LocalLeaders: [...ProgramOpt.LocalLeaders, LeaderId]
+        }
 
-        ProgramStorage.insert(ProgramOpt.ProgramId, ProgramOpt)
+        ProgramStorage.insert(updatedProgram.ProgramId, updatedProgram)
         return Ok("Leader add successfully")
 
       }catch(error: any) {
@@ -675,9 +678,12 @@ export default Canister({
           return Err({Error: "Already in Program"})
         }
 
-        ProgramOpt.RequestCitizens.push(UserProfileOpt.ProfileId)
+        const updatedProgram = {
+          ...ProgramOpt,
+          RequestCitizens: [...ProgramOpt.RequestCitizens, UserProfileOpt.ProfileId]
+        }
 
-        ProgramStorage.insert(ProgramId,ProgramOpt)
+        ProgramStorage.insert(ProgramId, updatedProgram)
         return Ok("Request sent!")
       }catch(error: any) {
         return Err({Err: `Error occured ${error.message}`})
@@ -787,20 +793,22 @@ export default Canister({
       ){
           return Err({Error: "Not request found or you exist in program"})
         }
-        const removeFromRequest = ProgramOpt.RequestCitizens.filter((Citizen: text)=>(
-          Citizen != ProfileId
-        ));
-
-        ProgramOpt.RequestCitizens = removeFromRequest;
-        ProgramOpt.Citizens.push(ProfileId)
-        ProgramStorage.insert(ProgramOpt.ProgramId,ProgramOpt)
+        const updatedProgram = {
+          ...ProgramOpt,
+          RequestCitizens: ProgramOpt.RequestCitizens.filter((Citizen: text) => Citizen !== ProfileId),
+          Citizens: [...ProgramOpt.Citizens, ProfileId]
+        }
+        ProgramStorage.insert(updatedProgram.ProgramId, updatedProgram)
 
         // Update citizen's ProgramsJoined list
         const AllUserProfiles = UserProfileStorage.values();
         const citizenProfile = AllUserProfiles.find((p: UserProfile) => p.ProfileId === ProfileId);
         if(citizenProfile && !citizenProfile.ProgramsJoined.includes(ProgramId)){
-          citizenProfile.ProgramsJoined.push(ProgramId);
-          UserProfileStorage.insert(citizenProfile.Owner, citizenProfile);
+          const updatedCitizen = {
+            ...citizenProfile,
+            ProgramsJoined: [...citizenProfile.ProgramsJoined, ProgramId]
+          }
+          UserProfileStorage.insert(updatedCitizen.Owner, updatedCitizen);
         }
 
        return Ok("Approved successfully")

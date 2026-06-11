@@ -6,7 +6,21 @@ const routes = {
   '/Programs': 'Programs',
   '/AdminDashboard': 'Dashboard',
   '/about': 'About',
-  '/Admin/Programs/:id/Request': 'Requests',
+  // Admin routes
+  '/Admin': 'Admin',
+  '/Admin/Dashboard': 'Dashboard',
+  '/Admin/Programs': 'Programs',
+  '/Admin/Stocks': 'Stocks',
+  '/Admin/Users': 'Users',
+  // Leader routes
+  '/Leader': 'Leader',
+  '/Leader/Programs': 'Programs',
+  '/Leader/Stocks': 'Stocks',
+  // Citizen routes
+  '/Citizens': 'Citizens',
+  '/Citizens/Dashboard': 'Dashboard',
+  '/Citizens/Programs': 'Programs',
+  '/Citizens/Stocks': 'Pending Stocks',
 };
 
 const Breadcrumb = () => {

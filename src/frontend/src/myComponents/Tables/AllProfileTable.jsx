@@ -1,12 +1,10 @@
-import React, { useEffect ,useState} from 'react';
+import React, { useEffect } from 'react';
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Box } from '@mui/material';
-import { yupResolver } from '@hookform/resolvers/yup';
 import { useDispatch,useSelector} from "react-redux";
 import TableSkeleton from '../skeletors/tableSkeletor';
 import { GetAllProfileThunk } from '@/Redux/action/GetAllProfile';
 import DropdownMenu from '../DropDown';
-import { IoMdMore } from 'react-icons/io';
 
 
 // Columns Definition
@@ -61,26 +59,9 @@ const columns = [
   {
     field: "Action",
     headerName: "Action",
-    renderCell: (params) => {
-      const [dropdownPosition, setDropdownPosition] = useState(null);
-  
-      const handleDropdownOpen = (event) => {
-        const rect = event.currentTarget.getBoundingClientRect();
-        setDropdownPosition({ top: rect.bottom, left: rect.left });
-      };
-  
-      return (
-        <div>
-          <button
-            onClick={handleDropdownOpen}
-            className="flex items-center justify-center w-8 h-8 focus:outline-none"
-          >
-            <IoMdMore className="w-5 h-5" />
-          </button>
-          {dropdownPosition && <DropdownMenu position={dropdownPosition} ProfileId={params.row.ProfileId}/>}
-        </div>
-      );
-    },
+    renderCell: (params) => (
+      <DropdownMenu ProfileId={params.row.ProfileId} />
+    ),
     width: 50,
   }
   

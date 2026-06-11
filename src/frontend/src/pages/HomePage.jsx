@@ -238,7 +238,7 @@ const HomePage = () => {
       {/* ── Footer strip ── */}
       <footer className="relative z-10 border-t border-white/[0.06] py-5 text-center
                          text-white/30 text-xs">
-        GovTransChain &nbsp;·&nbsp; Blockchain-powered public accountability
+        GovChain &nbsp;·&nbsp; Blockchain-powered public accountability
       </footer>
 
     </div>

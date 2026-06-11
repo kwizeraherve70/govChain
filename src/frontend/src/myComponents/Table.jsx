@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Button } from "../components/ui/button";
@@ -38,6 +38,7 @@ import AddLeader from "./AddLeaderPop";
 
 const Table = ({setStats}) => {
   const dispatch = useDispatch();
+  const [dialogOpen, setDialogOpen] = useState(false);
   useEffect(()=>{
     dispatch(GetAllProgramThunk())
     dispatch(ProgramStatsThunk())
@@ -90,33 +91,38 @@ const Table = ({setStats}) => {
     }
   ];
     // submission handling
-    const { 
-      register, 
-      handleSubmit, 
+    const {
+      register,
+      handleSubmit,
+      reset,
       setValue, formState: { errors } } = useForm({
       resolver: yupResolver(ProgramValid),
     });
 
-    
+
     const submit=async(data)=>{
       const cleanData = {
         ...data,
         Beneficials:data.Beneficials.toString()
       }
-   await  dispatch(CreateProgramThunk(cleanData))
-    dispatch(GetAllProgramThunk())
-    dispatch(ProgramStatsThunk())
+      const result = await dispatch(CreateProgramThunk(cleanData))
+      if(!result.error){
+        reset()
+        setDialogOpen(false)
+        await dispatch(GetAllProgramThunk())
+        dispatch(ProgramStatsThunk())
+      }
     }
     const { loading, errorz } = useSelector((state)=>state.Program)
     const { loadingz,Allprogram,Errorz  } = useSelector((state)=> state.AllProgram)
     const  { loadingS, ProgramStats, ErrorZ } = useSelector((state)=> state.ProgramStat)
     useMemo(()=>{
-        setStats(ProgramStats)
+        if (setStats) setStats(ProgramStats)
     },[ProgramStats])
   return (
     <>
       <div className="flex justify-end mb-3 font-bold">
-        <Dialog>
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
             <Button className="btn-web3 flex items-center gap-2"><FaPlus /> New Program</Button>
           </DialogTrigger>

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { GetAllProgramThunk } from '../Redux/action/GetAllProgram';
 import TableSkeleton from "./skeletors/tableSkeletor";
@@ -10,7 +10,7 @@ const ProgramDashTable = ({ setStats2 }) => {
   }, [dispatch]);
 
   const { loadingz, Allprogram, Errorz } = useSelector((state) => state.AllProgram);
-  useMemo(() => {
+  useEffect(() => {
     setStats2(Allprogram);
   }, [Allprogram]);
 

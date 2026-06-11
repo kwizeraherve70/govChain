@@ -24,26 +24,5 @@ export const ProfileValid = Yup.object().shape({
     .max(15, "max is 15 digit"),
    
 
-    Province :Yup
-    .string()
-    .required()
-    .min(6,"min is 6 characters")
-    .max(18,"max is 18 character"),
-    District: Yup
-    .string()
-    .required()
-    .min(6,"min is 6 characters")
-    .max(18,"max is 18 character"),
 
-    Sector: Yup
-    .string()
-    .required()
-    .min(4,"min is 4 characters")
-    .max(18,"max is 18 character"),
-
-    Cell:  Yup
-    .string()
-    .required()
-    .min(4,"min is 4 characters")
-    .max(18,"max is 18 character")
 });

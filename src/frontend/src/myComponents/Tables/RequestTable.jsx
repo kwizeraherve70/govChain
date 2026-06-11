@@ -18,7 +18,10 @@ const RequestedTable = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (!id) {
-        navigate('/Profile');
+        const fallback = window.location.pathname.startsWith("/Leader")
+          ? "/Leader/Programs"
+          : "/Admin/Programs";
+        navigate(fallback);
       } else {
         await dispatch(ViewRequestThunk(id))
       }

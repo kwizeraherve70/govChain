@@ -71,8 +71,11 @@ const LeaderStock = () => {
                             slots={{ toolbar: GridToolbar }}
                             sx={{
                                 border: "none",
+                                borderRadius: "12px",
                                 color: "rgba(255,255,255,0.75)",
                                 fontFamily: "inherit",
+                                backgroundColor: "rgba(255,255,255,0.03)",
+                                "--DataGrid-containerBackground": "rgba(255,255,255,0.04)",
                                 "& .MuiDataGrid-columnHeaders": {
                                     backgroundColor: "rgba(255,255,255,0.04)",
                                     color: "rgba(255,255,255,0.5)",

@@ -9,6 +9,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
+const CURRENT_YEAR = new Date().getFullYear();
+
 export function DatePickerDemo({ date, setDate }) {
   return (
     <Popover>
@@ -36,7 +38,7 @@ export function DatePickerDemo({ date, setDate }) {
           initialFocus
           captionLayout="dropdown-buttons"
           fromYear={1920}
-          toYear={new Date().getFullYear()}
+          toYear={CURRENT_YEAR}
           classNames={{
             months: "p-3",
             caption: "flex justify-between items-center mb-2 px-1",

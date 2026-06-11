@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { GetAllProfileThunk } from "../Redux/action/GetAllProfile";
 import TableSkeleton from "./skeletors/tableSkeletor";
@@ -17,7 +17,7 @@ const DashTable = ({ setStats }) => {
   }, [dispatch]);
 
   const { loading, GetAllProfile, error } = useSelector((state) => state.AllProfile);
-  useMemo(() => {
+  useEffect(() => {
     setStats(GetAllProfile);
   }, [GetAllProfile]);
 

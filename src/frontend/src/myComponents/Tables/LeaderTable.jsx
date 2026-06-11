@@ -7,22 +7,23 @@ import { Link } from "react-router-dom";
 import { useDispatch,useSelector} from "react-redux";
 import TableSkeleton from "../skeletors/tableSkeletor";
 import { GetAllProgramThunk } from "../../Redux/action/GetAllProgram";
-import { ProgramStatsThunk } from "../../Redux/action/ProgramStat";
 import { getProfile } from "../../utils/endpoints";
 import EnrolledCitizensModal from './EnrolledCitizensModal';
 
 
 
-const LeaderTable = ({setStats}) => {
+const LeaderTable = ({setMyPrograms}) => {
   const dispatch = useDispatch();
   const [myProfileId, setMyProfileId] = useState(null);
 
   useEffect(()=>{
     dispatch(GetAllProgramThunk())
-    dispatch(ProgramStatsThunk())
-    getProfile().then((res) => {
-      if (res.Ok) setMyProfileId(res.Ok.ProfileId);
-    });
+    getProfile()
+      .then((res) => {
+        if (res.Ok) setMyProfileId(res.Ok.ProfileId);
+        else setMyProfileId("");
+      })
+      .catch(() => setMyProfileId(""));
   },[dispatch])
 
   const columns = [
@@ -74,16 +75,15 @@ const LeaderTable = ({setStats}) => {
   ];
  
     const { loadingz,Allprogram,Errorz  } = useSelector((state)=> state.AllProgram)
-    const  {  ProgramStats, } = useSelector((state)=> state.ProgramStat)
 
     const myPrograms = useMemo(() => {
       if (!Allprogram || !myProfileId) return [];
       return Allprogram.filter((p) => p.LocalLeaders.includes(myProfileId));
     }, [Allprogram, myProfileId]);
 
-    useMemo(()=>{
-        setStats(ProgramStats)
-    },[ProgramStats])
+    useEffect(() => {
+      setMyPrograms(myPrograms);
+    }, [myPrograms]);
   return (
     <>
       <div className="flex justify-end mb-3 font-bold">
@@ -96,15 +96,19 @@ const LeaderTable = ({setStats}) => {
           },
         }}
       >
-        {loadingz || myProfileId === null?
-     (<div className="text-center">
-      <TableSkeleton />
-   </div>):
-   (myPrograms.length === 0 || Errorz)?(
-    <div className="text-center text-white/50 py-8">
-          <p>No programs assigned to you yet.</p>
-    </div>
-  ):(
+        {loadingz || myProfileId === null ? (
+          <div className="text-center">
+            <TableSkeleton />
+          </div>
+        ) : Errorz ? (
+          <div className="text-center text-red-400/70 py-8">
+            <p>Failed to load programs. Please refresh the page.</p>
+          </div>
+        ) : myPrograms.length === 0 ? (
+          <div className="text-center text-white/50 py-8">
+            <p>No programs assigned to you yet.</p>
+          </div>
+        ) : (
       <DataGrid
           getRowId={(row)=>(row.ProgramId)}
           rows={myPrograms}

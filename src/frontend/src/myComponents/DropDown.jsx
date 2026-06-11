@@ -1,13 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { IoMdMore } from 'react-icons/io';
 import ReactDOM from 'react-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { ChangeRoleThunk } from '@/Redux/action/ChangeRole';
 
-const DropdownMenu = ({ position,ProfileId }) => {
+const DropdownMenu = ({ ProfileId }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [position, setPosition] = useState(null);
+  const buttonRef = useRef(null);
   const dispatch = useDispatch()
   const toggleDropdown = () => {
+    if (!isOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({ top: rect.bottom, left: rect.left });
+    }
     setIsOpen((prev) => !prev);
   };
   const RoleChanger=(role)=>{
@@ -44,6 +50,7 @@ const DropdownMenu = ({ position,ProfileId }) => {
   return (
     <div className="relative">
       <button
+        ref={buttonRef}
         onClick={toggleDropdown}
         className="flex items-center justify-center w-8 h-8 focus:outline-none"
         aria-expanded={isOpen}

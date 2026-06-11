@@ -114,6 +114,7 @@ const CitizenDashboard = () => {
                                     border: 'none',
                                     color: 'rgba(255,255,255,0.75)',
                                     fontFamily: 'inherit',
+                                    '--DataGrid-containerBackground': 'rgba(255,255,255,0.04)',
                                     '& .MuiDataGrid-columnHeaders': {
                                         backgroundColor: 'rgba(255,255,255,0.04)',
                                         color: 'rgba(255,255,255,0.5)',

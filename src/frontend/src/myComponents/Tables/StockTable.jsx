@@ -1,4 +1,4 @@
-import React, { useState , useEffect, useMemo} from "react";
+import React, { useState , useEffect} from "react";
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { Button } from "../../components/ui/button";
@@ -35,19 +35,17 @@ import { BeatLoader } from "react-spinners";
 import TableSkeleton from "../skeletors/tableSkeletor";
 import { GetAllProgramThunk } from "@/Redux/action/GetAllProgram";
 import { GetAllStockThunk } from "@/Redux/action/GetAllStock";
-import { StockStatsThunk } from "@/Redux/action/StockStat";
 import TransferPop from "./TransferPop";
 import { ToastError } from "@/utils/toast";
 
 
 
-const StockTable = ({setStockStats}) => {
+const StockTable = () => {
   const [Program, setProgram ] = useState("")
   const dispatch = useDispatch();
   useEffect(()=>{
     dispatch(GetAllProgramThunk())
     dispatch(GetAllStockThunk())
-    dispatch(StockStatsThunk())
   },[dispatch])
 
 
@@ -107,15 +105,10 @@ const StockTable = ({setStockStats}) => {
       }
       await dispatch(CreateStockThunk(cleanData))
       dispatch(GetAllStockThunk())
-      dispatch(StockStatsThunk())
     }
     const { load  } = useSelector((state)=>state.CreateStock)
     const  { loading,AllStock,errorz } = useSelector((state)=>state.AllStocks)
     const { loadingz,Allprogram,Errorz  } = useSelector((state)=> state.AllProgram)
-    const { StockStats } = useSelector((state)=>state.StockStats)
-    useMemo(()=>{
-      setStockStats(StockStats)
-    },[StockStats])
   return (
     <>
       <div className="flex justify-end mb-3 font-bold">

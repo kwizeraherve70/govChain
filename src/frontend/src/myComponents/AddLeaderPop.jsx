@@ -38,7 +38,7 @@ const AddLeader=({ProgramId})=>{
         <Box>
 <Popover>
   <PopoverTrigger asChild>
-    <Button variant="outline" onClick={GetLeaders}>Add Leader</Button>
+    <Button className="bg-web3-purple hover:bg-web3-accent text-white border-0" onClick={GetLeaders}>Add Leader</Button>
   </PopoverTrigger>
   <PopoverContent className="w-[95%]">
     <div className="grid gap-4">
@@ -66,7 +66,7 @@ const AddLeader=({ProgramId})=>{
               </Select>
               <Button 
              className={`relative px-6 py-2 text-white font-semibold rounded-lg transition-all ${
-              load && "bg-gray-900 opacity-50 cursor-not-allowed"}`}x
+              load && "bg-gray-900 opacity-50 cursor-not-allowed"}`}
              type="submit"
              disabled={load}
              onClick={Sender}

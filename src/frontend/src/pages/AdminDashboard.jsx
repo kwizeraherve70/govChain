@@ -1,14 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import DashCard from "../myComponents/DashCard";
 import Chart from "../myComponents/Chart";
 import BarChart from "../myComponents/BarChart";
 import DashTable from "../myComponents/DashTable";
 import ProgramDashTable from "../myComponents/GramTable";
-import TransactionTable from "../myComponents/TransactionTable";
+import { GetAllStockThunk } from "@/Redux/action/GetAllStock";
 
 const AdminDashboard = () => {
+    const dispatch = useDispatch();
     const [stats,  setStats]  = useState(null);
     const [stats2, setStats2] = useState(null);
+
+    useEffect(() => {
+        dispatch(GetAllStockThunk());
+    }, [dispatch]);
+
+    const { AllStock } = useSelector((state) => state.AllStocks);
+
     return (
         <div className="p-5 space-y-6">
             {/* Page header */}
@@ -19,9 +28,9 @@ const AdminDashboard = () => {
 
             {/* Stat cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                <DashCard name="Total Users"    account={stats?.length || 0}  index={0} />
-                <DashCard name="Total Programs" account={stats2?.length || 0} index={1} />
-                <DashCard name="Stock Items"    account={0}                   index={2} />
+                <DashCard name="Total Users"    account={stats?.length || 0}    index={0} />
+                <DashCard name="Total Programs" account={stats2?.length || 0}   index={1} />
+                <DashCard name="Stock Items"    account={AllStock?.length || 0} index={2} />
             </div>
 
             {/* Charts & tables */}

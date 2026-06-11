@@ -1,4 +1,5 @@
 import React, { useState, useContext } from "react";
+import { format as formatDateFns } from "date-fns";
 import { DatePickerDemo } from "./DateInput";
 import {
   Select,
@@ -16,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { ProfileValid } from "@/validation/profileValid";
 import { CreateProfileThunk } from "@/Redux/action/createProfile";
 import { BeatLoader } from "react-spinners";
+import { PROVINCES, getDistricts, getSectors } from "@/data/rwandaData";
 import {
   User, Mail, CreditCard, Phone,
   MapPin, Building2, Grid3x3, Home,
@@ -48,6 +50,25 @@ const Field = ({ icon: Icon, label, error, children }) => (
   </div>
 );
 
+/* ── Reusable address Select ── */
+const AddressSelect = ({ value, onValueChange, placeholder, options, disabled }) => (
+  <Select value={value} onValueChange={onValueChange} disabled={disabled}>
+    <SelectTrigger className="flex-1 bg-transparent border-none p-0 h-auto
+                              text-sm text-white shadow-none focus:ring-0
+                              disabled:opacity-40 disabled:cursor-not-allowed">
+      <SelectValue placeholder={placeholder} />
+    </SelectTrigger>
+    <SelectContent className="bg-[#0c0d22] border border-white/10 text-white rounded-xl
+                               max-h-56 overflow-y-auto">
+      {options.map((opt) => (
+        <SelectItem key={opt} value={opt} className="focus:bg-web3-accent/20">
+          {opt}
+        </SelectItem>
+      ))}
+    </SelectContent>
+  </Select>
+);
+
 const inputCls = "flex-1 bg-transparent text-white text-sm placeholder:text-white/45 outline-none";
 
 /* ── Step definitions ── */
@@ -65,6 +86,16 @@ const ProfileForm = () => {
   const [dateError, setDateError]     = useState("");
   const [genderError, setGenderError] = useState("");
 
+  // Address — local state (cascading)
+  const [province, setProvince] = useState("");
+  const [district, setDistrict] = useState("");
+  const [sector,   setSector]   = useState("");
+  const [cell,     setCell]     = useState("");
+  const [provinceError, setProvinceError] = useState("");
+  const [districtError, setDistrictError] = useState("");
+  const [sectorError,   setSectorError]   = useState("");
+  const [cellError,     setCellError]     = useState("");
+
   const { hasProfile, name, Role } = useContext(AuthContext);
 
   const { register, handleSubmit, trigger, formState: { errors } } = useForm({
@@ -76,45 +107,61 @@ const ProfileForm = () => {
 
   if (hasProfile) return <Welcome name={name} role={Role} />;
 
-  function formatDate(inputDateStr) {
-    const d = new Date(inputDateStr);
-    d.setDate(d.getDate() - 1);
-    const f = d.toDateString().slice(4, 10) + " " + d.getFullYear();
-    return f.split(" ").join("-");
+  // Cascade handlers — selecting a parent resets all children
+  const handleProvinceChange = (v) => {
+    setProvince(v);
+    setDistrict("");
+    setSector("");
+    setProvinceError("");
+  };
+  const handleDistrictChange = (v) => {
+    setDistrict(v);
+    setSector("");
+    setDistrictError("");
+  };
+  const handleSectorChange = (v) => {
+    setSector(v);
+    setSectorError("");
+  };
+
+  function formatDate(d) {
+    return formatDateFns(d, "MMM-dd-yyyy");
   }
 
   const submit = (data) => {
     let valid = true;
-    if (!date) {
-      setDateError("Date of birth is required");
-      valid = false;
-    } else {
-      setDateError("");
-    }
-    if (!Gender) {
-      setGenderError("Gender is required");
-      valid = false;
-    } else {
-      setGenderError("");
-    }
+    if (!date)   { setDateError("Date of birth is required"); valid = false; }
+    else           setDateError("");
+    if (!Gender) { setGenderError("Gender is required");      valid = false; }
+    else           setGenderError("");
     if (!valid) return;
 
-    const { Province, District, Sector, Cell, Email, Fullname, Phone, NationalId } = data;
+    const { Email, Fullname, Phone, NationalId } = data;
     dispatch(CreateProfileThunk({
       Email, Fullname, Phone, NationalId,
       DateOfBirthday: formatDate(date),
       Gender,
       Disability: disability.trim() || null,
-      Address: { Province, District, Sector, Cell },
+      Address: { Province: province, District: district, Sector: sector, Cell: cell },
     }));
   };
 
   const STEP_FIELDS = [
     ["Fullname", "Email", "NationalId", "Phone"],
-    ["Province", "District", "Sector", "Cell"],
+    [], // address fields are managed with local state
   ];
 
   const next = async () => {
+    // Step 1 (Address) — validate address dropdowns manually
+    if (step === 1) {
+      let valid = true;
+      if (!province)    { setProvinceError("Province is required"); valid = false; }
+      if (!district)    { setDistrictError("District is required"); valid = false; }
+      if (!sector)      { setSectorError("Sector is required");     valid = false; }
+      if (!cell.trim()) { setCellError("Cell is required");         valid = false; }
+      if (valid) setStep((s) => Math.min(s + 1, STEPS.length - 1));
+      return;
+    }
     const valid = await trigger(STEP_FIELDS[step]);
     if (valid) setStep((s) => Math.min(s + 1, STEPS.length - 1));
   };
@@ -254,25 +301,52 @@ const ProfileForm = () => {
                   </div>
                 )}
 
-                {/* Step 2 — Address */}
+                {/* Step 2 — Address (cascading dropdowns) */}
                 {step === 1 && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    <Field icon={MapPin} label="Province" error={errors.Province?.message}>
-                      <input className={inputCls} placeholder="e.g. Kigali"
-                             {...register("Province")} />
+
+                    {/* Province */}
+                    <Field icon={MapPin} label="Province" error={provinceError}>
+                      <AddressSelect
+                        value={province}
+                        onValueChange={handleProvinceChange}
+                        placeholder="Select province"
+                        options={PROVINCES}
+                      />
                     </Field>
-                    <Field icon={Building2} label="District" error={errors.District?.message}>
-                      <input className={inputCls} placeholder="e.g. Gasabo"
-                             {...register("District")} />
+
+                    {/* District — unlocked after province */}
+                    <Field icon={Building2} label="District" error={districtError}>
+                      <AddressSelect
+                        value={district}
+                        onValueChange={handleDistrictChange}
+                        placeholder={province ? "Select district" : "Select province first"}
+                        options={getDistricts(province)}
+                        disabled={!province}
+                      />
                     </Field>
-                    <Field icon={Grid3x3} label="Sector" error={errors.Sector?.message}>
-                      <input className={inputCls} placeholder="e.g. Kimironko"
-                             {...register("Sector")} />
+
+                    {/* Sector — unlocked after district */}
+                    <Field icon={Grid3x3} label="Sector" error={sectorError}>
+                      <AddressSelect
+                        value={sector}
+                        onValueChange={handleSectorChange}
+                        placeholder={district ? "Select sector" : "Select district first"}
+                        options={getSectors(province, district)}
+                        disabled={!district}
+                      />
                     </Field>
-                    <Field icon={Home} label="Cell" error={errors.Cell?.message}>
-                      <input className={inputCls} placeholder="e.g. Bibare"
-                             {...register("Cell")} />
+
+                    {/* Cell — free text (thousands of cells in Rwanda) */}
+                    <Field icon={Home} label="Cell" error={cellError}>
+                      <input
+                        className={inputCls}
+                        placeholder="e.g. Bibare"
+                        value={cell}
+                        onChange={(e) => { setCell(e.target.value); setCellError(""); }}
+                      />
                     </Field>
+
                   </div>
                 )}
 
